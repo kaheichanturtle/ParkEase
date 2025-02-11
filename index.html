@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Timer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    
+    <div class="camera">
+        <video id="video" autoplay playsinline></video>
+        <img id="capturedImage">
+        <canvas id="canvas" style="display: none;"></canvas>
+    </div>
+    
+    <button id="captureBtn">Take Photo</button>
+    <button id="retakeBtn" style="display: none;">Retake Photo & Stop Timer</button>
+    
+    <div id="status"></div>
+    
+    <div class="result" id="resultBox" style="display: none;">
+        <h3>Sign Analysis</h3>
+        <div id="originalText"></div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
