@@ -1,29 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parking Timer</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parking Timer with Alarm</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    
-    <div class="camera">
-        <video id="video" autoplay playsinline></video>
-        <img id="capturedImage">
-        <canvas id="canvas" style="display: none;"></canvas>
+  <div class="camera">
+    <video id="video" autoplay playsinline></video>
+    <img id="capturedImage" />
+    <canvas id="canvas" style="display: none;"></canvas>
+  </div>
+
+  <button id="captureBtn">Take Photo</button>
+  <button id="retakeBtn" style="display: none;">Retake Photo & Stop Timer</button>
+
+  <div id="status"></div>
+
+  <div class="result" id="resultBox" style="display: none;">
+    <h3>Sign Analysis</h3>
+    <div id="originalText"></div>
+  </div>
+
+  <div class="sign-selection" id="signSelection">
+    <h3>Multiple parking signs detected. Which side did you park?</h3>
+    <div class="button-container">
+      <button id="leftSignBtn">Left Sign</button>
+      <button id="rightSignBtn">Right Sign</button>
     </div>
-    
-    <button id="captureBtn">Take Photo</button>
-    <button id="retakeBtn" style="display: none;">Retake Photo & Stop Timer</button>
-    
-    <div id="status"></div>
-    
-    <div class="result" id="resultBox" style="display: none;">
-        <h3>Sign Analysis</h3>
-        <div id="originalText"></div>
+  </div>
+
+  <div class="timers">
+    <div class="timer">
+      <h2>Warning Timer</h2>
+      <div id="warningTime" class="time">00:00:00</div>
     </div>
-    
-    <script src="script.js"></script>
+  </div>
+
+  <!-- Silent and Alarm Audio -->
+  <audio id="silentAudio" loop>
+    <source src="https://cdn.glitch.global/16c2e168-5f80-4256-858b-ebbfd77da240/5-seconds-of-silence.mp3?v=1739673346964" type="audio/mp3" />
+  </audio>
+  
+  <audio id="alarmAudio" loop>
+    <source src="https://cdn.glitch.global/16c2e168-5f80-4256-858b-ebbfd77da240/5-seconds-of-silence.mp3?v=1739673346964" type="audio/mp3" />
+  </audio>
+
+  <script src="script.js"></script>
 </body>
 </html>
