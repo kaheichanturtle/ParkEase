@@ -1,8 +1,7 @@
-# 🚗 Parking Timer AI (IOS only for now)
+# 🚗 Parking Timer AI
 
-### ⏳ AI-Powered Parking Timer – A **Shellcraft x Timer+** Collaboration  
-
-**Never get a parking fine again!** Our AI reads parking signs and starts a timer in **Timer+ (iOS)** to remind you when your time is up.  
+### ⏳ AI-Powered Parking Timer – A **Shellcraft Project**
+**Never get a parking fine again!** Our AI reads parking signs and starts a timer using the website silent audio background implementation made by [kaheichanturtle/BrowserTimer](https://github.com/kaheichanturtle/BrowserTimer)
 
 ## 📌 Overview  
 
@@ -12,7 +11,7 @@ Parking Timer AI is a web-based tool that helps drivers **avoid parking fines** 
 
 1. 📸 **Take a photo** of the parking sign  
 2. 🧠 **AI (Gemini 2.0 Flash)** reads the sign and calculates the parking duration  
-3. ⏳ **Auto-starts a timer** in **Timer+ (iOS)** using the URL scheme  
+3. ⏳ **Auto-starts a timer** in **Your Browser, anywhere!**
 
 🚀 **No more guessing or forgetting – just snap, set, and park worry-free!**  
 
@@ -22,14 +21,6 @@ Parking Timer AI is a web-based tool that helps drivers **avoid parking fines** 
 
 🔗 **[Try it Now](https://parkingai.glitch.me)**  
 
-🔹 Install Timer+ (iOS)
-To use the automatic timer feature, you must have the Timer+ app installed on your iPhone.
-
-📲 Download Timer+ from the App Store:
-🔗 [Timer+ on the App Store](https://apps.apple.com/us/app/timer-multiple-timers/id391564049)
-
-Once installed, the website will use Timer+’s URL scheme to automatically start a parking timer for you. 🚀
-
 ---
 
 ## 🛠️ Tech Stack  
@@ -37,7 +28,7 @@ Once installed, the website will use Timer+’s URL scheme to automatically star
 - **Frontend:** HTML, CSS, JavaScript  
 - **AI Model:** Google Gemini 2.0 Flash  
 - **OCR:** Gemini Vison
-- **Integration:** Timer+ (iOS) URL scheme  
+- **Integration:** [BrowserTimer background silent audio](https://github.com/kaheichanturtle/BrowserTimer)
 
 ---
 
@@ -78,26 +69,13 @@ The website should now be live at `http://localhost:3000` 🚀
 - The **Gemini 2.0 Flash** model extracts the parking duration  
 - The system **automatically calculates your remaining time**  
 
-### Step 3: Start a Timer in Timer+  
-
-- The site will generate a Timer+ URL  
-- Click to **auto-start your countdown** in **Timer+ (iOS)**  
-
-Example:  
-
-```bash
-timerplus://timer?title=Parking&seconds=3600
-```
-
-This opens **Timer+** and starts a **1-hour countdown** instantly!  
-
 ---
 
 ## 📜 License  
 
-**Copyright © 2025 Shellcraft Studios, Shellcraft Designs & Timer+.**  
+**Copyright © 2025 Shellcraft Studios, Shellcraft Designs.**  
 
-All rights reserved. No part of this codebase may be copied, modified, distributed, or reused in any form without prior written permission from **Shellcraft Studios, Shellcraft Designs, or Timer+**. Unauthorized use of this software is strictly prohibited.  
+All rights reserved. No part of this codebase may be copied, modified, distributed, or reused in any form without prior written permission from **Shellcraft Studios, Shellcraft Designs. Unauthorized use of this software is strictly prohibited.  
 
 By using this software, you agree to these terms.  
 
@@ -107,7 +85,6 @@ By using this software, you agree to these terms.
 
 - **Ka Hei (@kaheichanturtle)** – Lead Developer  
 - **Shellcraft Studios & Shellcraft Designs** – Creators  
-- **Timer+** – Official Integration Partner  
 
 ---
 
