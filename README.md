@@ -1,4 +1,4 @@
-# 🚗 Parking Timer AI
+# ParkEase, you favourite 🚗 Parking Timer AI companion
 
 ### ⏳ AI-Powered Parking Timer – A **Shellcraft Project**
 **Never get a parking fine again!** Our AI reads parking signs and starts a timer using the website silent audio background implementation made by [kaheichanturtle/BrowserTimer](https://github.com/kaheichanturtle/BrowserTimer)
