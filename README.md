@@ -19,7 +19,7 @@ Parking Timer AI is a web-based tool that helps drivers **avoid parking fines** 
 
 ## 🌍 Live Demo  
 
-🔗 **[Try it Now](https://parkingai.glitch.me)**  
+🔗 **[Try it Now](https://parkease.glitch.me)**  
 
 ---
 
