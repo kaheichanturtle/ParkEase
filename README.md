@@ -1,94 +1,45 @@
-# ParkEase, your favourite Parking Timer AI companion
+# ParkEase
 
-### ⏳ AI-Powered Parking Timer – A **Shellcraft Project**
-**Never get a parking fine again!** Our AI reads parking signs and starts a timer using the website silent audio background implementation made by [kaheichanturtle/BrowserTimer](https://github.com/kaheichanturtle/BrowserTimer)
+**Never pay a parking fine again.**
 
-## 📌 Overview  
-
-Parking Timer AI is a web-based tool that helps drivers **avoid parking fines** by automatically detecting time limits from parking signs.  
-
-### 🔥 How It Works:  
-
-1. 📸 **Take a photo** of the parking sign  
-2. 🧠 **AI (Gemini 2.0 Flash)** reads the sign and calculates the parking duration  
-3. ⏳ **Auto-starts a timer** in **Your Browser, anywhere!**
-
-🚀 **No more guessing or forgetting – just snap, set, and park worry-free!**  
+ParkEase is an open-source, browser-based parking timer that uses AI to interpret parking signs and automatically set a timer for you. Just take a photo, and you're set.
 
 ---
 
-## 🌍 Live Demo  
+## Features
 
-🔗 **[Try it Now](https://parkease.glitch.me)**  
-
----
-
-## 🛠️ Tech Stack  
-
-- **Frontend:** HTML, CSS, JavaScript  
-- **AI Model:** Google Gemini 2.0 Flash  
-- **OCR:** Gemini Vison
-- **Integration:** [BrowserTimer background silent audio](https://github.com/kaheichanturtle/BrowserTimer)
+- **AI-Powered Sign Reading**: Snap a photo of any parking sign, and our AI handles the rest.
+- **Smart Background Timer**: Timer keeps running even if your phone is locked. Alerts you 15 minutes before time is up.
+- **GPS & Maps**: Automatically saves your parked location so you can find your car later.
+- **Parking History**: View a log of past parked locations.
+- **No App Required**: Works entirely in your browser.
+- **Fully Private**: No accounts, no tracking, no servers. Data is stored only on your device via LocalStorage.
+- **Open Source**: Everything’s public and inspectable.
 
 ---
 
-## 🛠️ Installation & Setup  
+## Providers and testing thanks to:
 
-### 🔹 Clone the Repository  
+- Google DeepMind
+- Glitch (by Fastly)
+- Transport for NSW
+- City of Sydney
+- Knox Grammar School
+- Anthropic
+- Shellcraft Studios
 
-```bash
-git clone https://github.com/shellcraft-studios/parking-timer-ai.git
-cd parking-timer-ai
-```
-
-### 🔹 Install Dependencies  
-
-```bash
-npm install
-```
-
-### 🔹 Run the Server  
-
-```bash
-npm start
-```
-
-The website should now be live at `http://localhost:3000` 🚀  
+[Request removal from this list](mailto:2uh114cu@duck.com?subject=Remove%20My%20Name%20in%20Github%20from%20ParkEase)
 
 ---
 
-## 🚀 Usage  
+## Try it now
 
-### Step 1: Upload a Parking Sign Photo  
-
-- Open the **Parking Timer AI** website  
-- Upload a **clear** photo of the parking sign  
-
-### Step 2: AI Reads the Sign  
-
-- The **Gemini 2.0 Flash** model extracts the parking duration  
-- The system **automatically calculates your remaining time**  
+[https://parkease.glitch.me](https://parkease.glitch.me)
 
 ---
 
-## 📜 License  
+## License
 
-**Copyright © 2025 Shellcraft Studios, Shellcraft Designs.**  
+View the full license in the `LICENSE` file.
 
-All rights reserved. No part of this codebase may be copied, modified, distributed, or reused in any form without prior written permission from **Shellcraft Studios, Shellcraft Designs. Unauthorized use of this software is strictly prohibited.  
-
-By using this software, you agree to these terms.  
-
----
-
-## ✨ Contributors  
-
-- **Ka Hei (@kaheichanturtle)** – Lead Developer  
-- **Shellcraft Studios & Shellcraft Designs** – Creators  
-
----
-
-## 📬 Contact  
-
-📧 **2uh114cu@duck.com**  
-🌐 **[Shellcraft Studios](https://www.shorturl.at/v8TYg)**  
+Copyright 2025 Ka Hei Chan and Shellcraft Studios. Unauthorized use is prohibited.
