@@ -1,0 +1,22 @@
+{
+  "name": "ParkEase",
+  "short_name": "ParkEase",
+  "description": "Parking Timer and Sign Analysis App",
+  "start_url": "/app.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://cdn.glitch.global/cbdf53ed-1d1e-441b-8c47-ff223e3a04c8/android-launchericon-192-192.png?v=1741136144106",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn.glitch.global/cbdf53ed-1d1e-441b-8c47-ff223e3a04c8/android-launchericon-512-512.png?v=1741136142113",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
