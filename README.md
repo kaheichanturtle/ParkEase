@@ -64,4 +64,4 @@ ParkEase is an open-source, browser-based parking timer that uses AI to interpre
 
 View the full license in the `LICENSE` file.
 
-Copyright 2025 Ka Hei Chan and Shellcraft Studios. Unauthorized use is prohibited.
+Copyright 2025 Ka Hei Chan and Shellcraft Studios. Unauthorized copying is prohibited.
