@@ -4,6 +4,7 @@
 
 
 [https://parkease.glitch.me](https://parkease.glitch.me)
+Glitch.com is shutting down its web hosting support, and therefore ParkEase, together with Glitch, will go offline in July 8, 2025. Thank you for your support! You could still build ParkEase by yourself, using the index.html and placing it on a web hosting site to use. ParkEase will be temperarily be unmaintained unless there are "certain reasons" that I wanted to get back to this project.
 
 ParkEase is an open-source, browser-based parking timer that uses AI to interpret parking signs and automatically set a timer for you. Just take a photo, and you're set.
 
