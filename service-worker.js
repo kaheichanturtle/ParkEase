@@ -1,9 +1,9 @@
-const CACHE_NAME = 'parkease-v9.' + new Date().toISOString();
+const CACHE_NAME = 'parkease-v10.' + new Date().toISOString();
 const urlsToCache = [
   '/app.html',
   '/manifest.json',
-  'https://cdn.glitch.global/cbdf53ed-1d1e-441b-8c47-ff223e3a04c8/android-launchericon-192-192.png?v=1741136144106',
-  'https://cdn.glitch.global/cbdf53ed-1d1e-441b-8c47-ff223e3a04c8/android-launchericon-512-512.png?v=1741136142113'
+  // 'https://cdn.glitch.global/cbdf53ed-1d1e-441b-8c47-ff223e3a04c8/android-launchericon-192-192.png?v=1741136144106',
+  // 'https://cdn.glitch.global/cbdf53ed-1d1e-441b-8c47-ff223e3a04c8/android-launchericon-512-512.png?v=1741136142113'
 ];
 
 self.addEventListener('install', (event) => {

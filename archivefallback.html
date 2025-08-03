@@ -1,0 +1,1498 @@
+ <!--
+Version: Collapse camera (7.7 beta)
+Copyright Ka Hei Chan, Shellcraft Studios, 2025.
+
+DO NOT COPY
+
+ParkEase™ and all associated content, code, and intellectual property are protected under copyright law. Unauthorized use, reproduction, distribution, or modification of this project, in whole or in part, is strictly prohibited without prior written consent from the copyright holder.
+
+#Permissions
+- Viewing: You are allowed to view the content and code for personal or educational purposes.
+- Forking: Forking this repository is allowed only for non-commercial, educational, or collaborative purposes, provided that proper attribution is given.
+
+#Restrictions
+- Commercial Use: You may not use this project or any derivative works for commercial purposes without explicit permission.
+- Distribution: You may not distribute, publish, or sell any part of this project without prior written consent.
+- Modification: You may not modify, adapt, or create derivative works without explicit permission.
+
+#Attribution
+If you use or reference this project in any way, you must provide proper attribution by linking back to the original repository:  
+[Parking AI Timer Repository](https://github.com/kaheichanturtle/Parkease)
+
+#Legal Notice
+Any unauthorized use of this project may result in legal action. For inquiries regarding permissions, licensing, or collaborations, please contact us at [2uh114cu@duck.com](#).
+-->
+
+<!-- Disabled Reason. Cmd+F reason to enable them -->
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ParkEase</title>
+    <meta name="theme-color" content="#4a90e2" />
+    <link rel="manifest" href="/manifest.json" />
+    <link
+      rel="apple-touch-icon"
+      href="https://cdn.glitch.global/cbdf53ed-1d1e-441b-8c47-ff223e3a04c8/android-launchericon-192-192.png?v=1741136144106"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="https://cdn.glitch.global/cbdf53ed-1d1e-441b-8c47-ff223e3a04c8/android-launchericon-192-192.png?v=1741136144106"
+    />
+    <style>
+      :root {
+        --primary: #4a90e2;
+        --primary-light: #7eb4ff;
+        --primary-dark: #2d6fc8;
+        --text: #333333;
+        --text-light: #666666;
+        --background: #f8f9fa;
+        --card: #ffffff;
+        --success: #34c759;
+        --warning: #ffcc00;
+        --danger: #ff3b30;
+        --gray: #e0e0e0;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --radius: 12px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      }
+
+      body {
+        background-color: var(--background);
+        color: var(--text);
+        padding: 0;
+        margin: 0;
+        min-height: 100vh;
+        overscroll-behavior-y: contain;
+      }
+
+      .install-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: var(--primary-light);
+        color: white;
+        padding: 10px 16px;
+        font-size: 14px;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .install-banner-text {
+        flex-grow: 1;
+        margin-right: 10px;
+      }
+
+      .install-btn {
+        background-color: white;
+        color: var(--primary);
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .install-btn:hover {
+        background-color: var(--gray);
+      }
+
+      .app-container {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 0;
+        overflow: hidden;
+        position: relative;
+        /*     	border-radius: 10px; */
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        background: var(--primary);
+        color: white;
+        border-radius: 0 0 var(--radius) var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      .header h1 {
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .current-time {
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      .card {
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 20px;
+        margin: 16px;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+      }
+
+      .instruction {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        margin: 16px;
+        background: var(--primary-light);
+        color: white;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        font-weight: 500;
+      }
+
+      .instruction svg {
+        margin-right: 12px;
+        flex-shrink: 0;
+      }
+
+      .camera-container {
+        position: relative;
+        width: 100%;
+        padding: 0 16px;
+        margin-bottom: 16px;
+      }
+
+      #video,
+      #capturedImage {
+        width: 100%;
+        max-height: 350px;
+        object-fit: cover;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        background: var(--gray);
+        transition: var(--transition);
+      }
+
+      #capturedImage {
+        display: none;
+      }
+
+      .button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        padding: 14px;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        border-radius: var(--radius);
+        margin: 12px 0;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        color: white;
+        outline: none;
+      }
+
+      .button svg {
+        margin-right: 8px;
+        flex-shrink: 0;
+      }
+
+      .primary-button {
+        background: var(--primary);
+      }
+
+      .primary-button:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .danger-button {
+        background: var(--danger);
+      }
+
+      .danger-button:hover {
+        background: #d93025;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .timer-card {
+        text-align: center;
+        transition: var(--transition);
+      }
+
+      .timer-label {
+        font-size: 14px;
+        color: var(--text-light);
+        margin-bottom: 8px;
+      }
+
+      .time-display {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 8px;
+      }
+
+      .expires-at {
+        font-size: 14px;
+        color: var(--text-light);
+      }
+
+      .sign-container {
+        display: flex;
+        gap: 16px;
+        margin: 0 16px 16px 16px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: var(--transition);
+        height: 0;
+        overflow: hidden;
+      }
+
+      .sign-container.visible {
+        opacity: 1;
+        transform: translateY(0);
+        height: auto;
+        margin-bottom: 16px;
+      }
+
+      .sign-card {
+        flex: 1;
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        background: var(--card);
+        transition: var(--transition);
+      }
+
+      .sign-header {
+        padding: 12px;
+        color: white;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      .allowed {
+        background: var(--success);
+      }
+
+      .ticket {
+        background: var(--warning);
+      }
+
+      .no-parking {
+        background: var(--danger);
+      }
+
+      .sign-body {
+        padding: 16px;
+      }
+
+      .sign-row {
+        display: flex;
+        margin-bottom: 10px;
+        font-size: 14px;
+      }
+
+      .sign-label {
+        flex: 0 0 80px;
+        font-weight: 600;
+        color: var(--text-light);
+      }
+
+      .sign-value {
+        flex: 1;
+        color: var(--text);
+      }
+
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: var(--transition);
+      }
+
+      .modal.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .modal-content {
+        width: 85%;
+        max-width: 400px;
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 24px;
+        transform: translateY(20px);
+        transition: var(--transition);
+      }
+
+      .modal.visible .modal-content {
+        transform: translateY(0);
+      }
+
+      .modal-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        text-align: center;
+      }
+
+      .modal-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+      }
+
+      .modal-button {
+        flex: 1;
+      }
+
+      .status-message {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        padding: 12px 20px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+        z-index: 900;
+        transition: var(--transition);
+        pointer-events: none;
+        opacity: 0;
+        text-align: center;
+        max-width: 85%;
+      }
+
+      .status-message.visible {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+
+      .ai-details-container {
+        margin: 16px;
+      }
+
+      .collapsible {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 14px 16px;
+        background: var(--gray);
+        border: none;
+        text-align: left;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text);
+        border-radius: var(--radius);
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .collapsible:hover {
+        background: #d4d4d4;
+      }
+
+      .chevron {
+        transition: var(--transition);
+      }
+
+      .collapsible.active .chevron {
+        transform: rotate(180deg);
+      }
+
+      .content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        background: var(--card);
+        border-radius: 0 0 var(--radius) var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      .ai-response {
+        padding: 16px;
+        font-size: 14px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        overflow-x: auto;
+        background: #f8f8f8;
+        border-radius: var(--radius);
+        margin: 12px;
+      }
+
+      .camera-collapsible {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: calc(100% - 32px);
+        padding: 14px 16px;
+        background: var(--white);
+        border: 0.05px solid grey;
+        text-align: left;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text);
+        border-radius: var(--radius);
+        cursor: pointer;
+        transition: var(--transition);
+        margin: 16px;
+        box-sizing: border-box;
+      }
+
+      .camera-collapsible:hover {
+        background: #f8f9fa;
+      }
+
+      .camera-chevron {
+        transition: var(--transition);
+      }
+
+      .camera-collapsible.active .camera-chevron {
+        transform: rotate(180deg);
+      }
+
+      .camera-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+      }
+
+      .camera-content.open {
+        max-height: 500px; /* Adjust as needed if camera wanted to be bigger */
+      }
+
+      .disclaimer {
+        font-size: 10px; 
+      }
+
+      .fade-in {
+        animation: fadeIn 0.3s forwards;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .pulse {
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(74, 144, 226, 0.4);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(74, 144, 226, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(74, 144, 226, 0);
+        }
+      }
+
+      .info-icon {
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        background: var(--primary);
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        z-index: 100;
+      }
+
+      .disclaimer-modal {
+        position: fixed;
+        bottom: 70px;
+        right: 16px;
+        background: white;
+        padding: 16px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        max-width: 300px;
+        z-index: 100;
+        opacity: 0;
+        pointer-events: none;
+        transition: var(--transition);
+      }
+
+      .disclaimer-modal.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="install-banner" class="install-banner" style="display: none">
+      <div class="install-banner-text">
+        You are using ParkEase Lite. Install ParkEase for a better experience
+      </div>
+      <button id="install-btn" class="install-btn">Install</button>
+    </div>
+
+    <div class="app-container">
+      <div class="instruction">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 16V12M12 8H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span>Remember to turn up your device's volume for the alarm!</span>
+      </div>
+
+      <div class="camera-collapsible">
+        <span>Show/Hide Camera</span>
+        <svg
+          class="camera-chevron"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M6 9L12 15L18 9"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </div>
+      <div class="camera-content open">
+        <div class="camera-container">
+          <video id="video" autoplay playsinline></video>
+          <img id="capturedImage" />
+          <canvas id="canvas" style="display: none"></canvas>
+        </div>
+      </div>
+
+      <div id="signGraphs" class="sign-container">
+        <div class="sign-card" id="leftSignCard">
+          <div class="sign-header" id="leftSignHeader">LEFT SIDE</div>
+          <div class="sign-body">
+            <div class="sign-row">
+              <div class="sign-label">Time:</div>
+              <div class="sign-value" id="leftTime"></div>
+            </div>
+            <div class="sign-row">
+              <div class="sign-label">Sign:</div>
+              <div class="sign-value" id="leftSign"></div>
+            </div>
+<!--             <div class="sign-row">
+              <div class="sign-label">Reason:</div>
+              <div class="sign-value" id="leftReason"></div>
+            </div> -->
+            <div class="sign-row">
+              <div class="sign-label">Ticket:</div>
+              <div class="sign-value" id="leftTicket"></div>
+            </div>
+            <div class="sign-row">
+              <div class="sign-label">Disabled:</div>
+              <div class="sign-value" id="leftDisabled"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sign-card" id="rightSignCard">
+          <div class="sign-header" id="rightSignHeader">RIGHT SIDE</div>
+          <div class="sign-body">
+            <div class="sign-row">
+              <div class="sign-label">Time:</div>
+              <div class="sign-value" id="rightTime"></div>
+            </div>
+            <div class="sign-row">
+              <div class="sign-label">Sign:</div>
+              <div class="sign-value" id="rightSign"></div>
+            </div>
+<!--             <div class="sign-row">
+              <div class="sign-label">Reason:</div>
+              <div class="sign-value" id="rightReason"></div>
+            </div> -->
+            <div class="sign-row">
+              <div class="sign-label">Ticket:</div>
+              <div class="sign-value" id="rightTicket"></div>
+            </div>
+            <div class="sign-row">
+              <div class="sign-label">Disabled:</div>
+              <div class="sign-value" id="rightDisabled"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding: 0 16px">
+        <button id="captureBtn" class="button primary-button">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"
+              stroke="white"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M9 2L7.17 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4H16.83L15 2H9Z"
+              stroke="white"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+        <button
+          id="retakeBtn"
+          class="button danger-button"
+          style="display: none"
+          onclick="location.reload();"
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4 4V9H4.58152M19.9381 11C19.446 7.05369 16.0796 4 12 4C8.64262 4 5.76829 6.06817 4.58152 9M4.58152 9H9M20 20V15H19.4185M19.4185 15C18.2317 17.9318 15.3574 20 12 20C7.92038 20 4.55399 16.9463 4.06189 13M19.4185 15H15"
+              stroke="white"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div id="timerCard" class="card timer-card" style="display: none">
+        <div class="timer-label">Time Until Reminder (-15min)</div>
+        <div id="warningTime" class="time-display">00:00:00</div>
+        <div id="expiryTime" class="expires-at"></div>
+      </div>
+
+      <div class="ai-details-container">
+        <button class="collapsible">
+          <span>Show AI Response Details</span>
+          <svg
+            class="chevron"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M6 9L12 15L18 9"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+        <div class="content">
+          <pre class="ai-response" id="originalText"></pre>
+        </div>
+      </div>
+
+      <div class="info-icon" id="infoIcon">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 16V12M12 8H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </div>
+
+      <div class="disclaimer-modal" id="disclaimerModal">
+        <p>
+          ParkEase may be inaccurate. Follow local laws to avoid fines.
+          We are not liable for errors, and you waive any legal actions
+          against us. More info:
+          <a
+            href="https://parkease.glitch.me/terms.html"
+            target="_blank"
+            style="color: var(--primary); text-decoration: underline"
+            >Terms and Conditions</a
+          >
+        </p>
+        <br>
+        <p>Made by KH at Shellcraft, March 10 2025 6:26pm Version</p>
+      </div>
+
+      <div id="signSelection" class="modal">
+        <div class="modal-content">
+          <div class="modal-title">Which side did you park?</div>
+          <div class="modal-buttons">
+            <button id="leftSignBtn" class="button primary-button modal-button">
+              Left Side
+            </button>
+            <button
+              id="rightSignBtn"
+              class="button primary-button modal-button"
+            >
+              Right Side
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="ticketConfirmation" class="modal">
+        <div class="modal-content">
+          <div class="modal-title">Ticket Required</div>
+          <button id="ticketConfirmBtn" class="button primary-button">
+            I've purchased a ticket
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="status" class="status-message"></div>
+
+    <audio id="silentAudio" loop>
+      <source
+        src="https://cdn.glitch.global/16c2e168-5f80-4256-858b-ebbfd77da240/5-seconds-of-silence.mp3?v=1739673346964"
+        type="audio/mp3"
+      />
+    </audio>
+
+    <audio id="alarmAudio" loop>
+      <source
+        src="https://cdn.glitch.global/16c2e168-5f80-4256-858b-ebbfd77da240/5-seconds-of-silence.mp3?v=1739673346964"
+        type="audio/mp3"
+      />
+    </audio>
+
+    <script>
+      document
+        .querySelector(".camera-collapsible")
+        .addEventListener("click", function () {
+          const cameraContent = document.querySelector(".camera-content");
+          const chevron = document.querySelector(".camera-chevron");
+
+          cameraContent.classList.toggle("open");
+          this.classList.toggle("active");
+        });
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/service-worker.js")
+            .then((registration) => {
+              console.log("Service Worker registered successfully");
+            })
+            .catch((error) => {
+              console.log("Service Worker registration failed:", error);
+            });
+        });
+      }
+
+      // Install Banner Logic
+      let deferredPrompt;
+      const installBanner = document.getElementById("install-banner");
+      const installBtn = document.getElementById("install-btn");
+
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBanner.style.display = "flex";
+      });
+
+      installBtn.addEventListener("click", async () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          if (outcome === "accepted") {
+            installBanner.style.display = "none";
+          }
+          deferredPrompt = null;
+        }
+      });
+
+      window.addEventListener("appinstalled", () => {
+        installBanner.style.display = "none";
+        deferredPrompt = null;
+      });
+
+      const video = document.getElementById("video");
+      const canvas = document.getElementById("canvas");
+      const capturedImage = document.getElementById("capturedImage");
+      const captureBtn = document.getElementById("captureBtn");
+      const retakeBtn = document.getElementById("retakeBtn");
+      const status = document.getElementById("status");
+      const timerCard = document.getElementById("timerCard");
+      const warningTimeEl = document.getElementById("warningTime");
+      const expiryTimeEl = document.getElementById("expiryTime");
+      const silentAudio = document.getElementById("silentAudio");
+      const alarmAudio = document.getElementById("alarmAudio");
+      const originalText = document.getElementById("originalText");
+      const signSelection = document.getElementById("signSelection");
+      const leftSignBtn = document.getElementById("leftSignBtn");
+      const rightSignBtn = document.getElementById("rightSignBtn");
+      const ticketConfirmation = document.getElementById("ticketConfirmation");
+      const ticketConfirmBtn = document.getElementById("ticketConfirmBtn");
+      const currentTimeEl = document.getElementById("currentTime");
+      const signGraphs = document.getElementById("signGraphs");
+
+      // Left sign elements
+      const leftSignHeader = document.getElementById("leftSignHeader");
+      const leftTime = document.getElementById("leftTime");
+      const leftSign = document.getElementById("leftSign");
+      // const leftReason = document.getElementById("leftReason");
+      const leftTicket = document.getElementById("leftTicket");
+      const leftDisabled = document.getElementById("leftDisabled");
+
+      // Right sign elements
+      const rightSignHeader = document.getElementById("rightSignHeader");
+      const rightTime = document.getElementById("rightTime");
+      const rightSign = document.getElementById("rightSign");
+      // const rightReason = document.getElementById("rightReason");
+      const rightTicket = document.getElementById("rightTicket");
+      const rightDisabled = document.getElementById("rightDisabled");
+
+      const GEMINI_PROMPT = `
+Take a deep breath and look at the image provided.
+For each parking sign(s) provided, return the following sections in order:
+
+1. List All Visible Parking Signs
+Include the sign details and the arrow direction (Left, Right, Both(which includes no arrows)).
+Format:
+ [Arrow Direction] Sign (#) - Time: [Minutes/unlimited/no parking] -- Sign it is referring to: [Sign details] -- Ticket: [Yes/No] -- Disabled: [Yes/No]
+
+2. Determine Which Sign Applies Based on Current Time & Day
+Current time: ${new Date().toLocaleString()}
+Current day: ${new Date().toLocaleDateString("en-US", { weekday: "long" })}
+If there are multiple signs that covers different time slots, use the one that applies to the current time.
+If no sign is valid for the current time and there are no other restrictions, return "unlimited".
+If there is a sign with “free parking” and another sign in the same time slot, the free parking applies.
+
+3. Convert Parking Time to Minutes
+"2P" → 120
+"3P" → 180
+"4P" → 240
+"No Parking" / "No Stopping" / "Clearway" / "Zones, like Mail Zone, Police, etc" if it is in that time slot (or no time slot) → "no parking"
+If no parking signs apply, return "unlimited"
+
+4. Handle Ticket/Metered Parking
+If the sign includes "ticket" or "meter" or any thing that indicates paid parking, return "Yes" for the Ticket field.
+
+5. Handle Disability Parking
+If the sign is a disabled parking sign, return "Yes" for the Disabled field and "no parking" for the Time field.
+
+6. Return Final Left & Right Signs
+For each side of the pole, based on the current time and the parking signs you listed out, determine the times the parking sign applies return the FINAL Left Sign and FINAL Right Sign in this format (even if the sign applies to both sides, still return both sides.):
+ FINAL Left Sign - Time: [Minutes/unlimited/no parking] -- Sign Used: [Sign details] -- Reason: [Why you think this parking sign applies] -- Ticket: [Yes/No] -- Disabled: [Yes/No]
+ FINAL Right Sign - Time: [Minutes/unlimited/no parking] -- Sign Used: [Sign details] -- Reason: [Why you think this parking sign applies] -- Ticket: [Yes/No] -- Disabled: [Yes/No]
+
+IMPORTANT Clarifications:
+Only Three Possible Arrow Directions:
+Left Arrow → Only affects the left side of the pole.
+Right Arrow → Only affects the right side of the pole.
+Both Arrows → Applies to both sides, meaning there should be NO separate Left or Right sign interpretations—just one sign applying to both.
+
+Example Scenarios & Expected Output for your better understanding:
+
+Scenario 1
+Signs:
+Left Arrow: "2P Mon-Fri 1pm-6pm"
+Left Arrow: "3P Mon-Fri 6am-1pm"
+Right Arrow: "4P Sat-Sun"
+Current Time: Monday 1:50pm
+Expected Output:
+FINAL Left Sign - Time: 120 -- Sign Used: Mon-Fri 1pm-6pm -- Reason: It is in that time slot -- Ticket: No -- Disabled: No
+FINAL Right Sign - Time: unlimited -- Sign Used: None -- Reason: It is not in any sign’s time slot -- Ticket: No -- Disabled: No
+
+Scenario 2
+Signs:
+Left Arrow: "2P Mon-Fri 1pm-6pm ticket"
+Right Arrow: "3P Mon-Fri 6am-1pm"
+Current Time: Monday 12:30pm
+Expected Output:
+FINAL Left Sign - Time: unlimited -- Sign Used: None -- Reason: It is not in any sign’s time slot -- Ticket: No -- Disabled: No
+FINAL Right Sign - Time: 180 -- Sign Used: Mon-Fri 6am-1pm -- Reason: It is in that time slot -- Ticket: No -- Disabled: No
+
+Scenario 3
+Signs:
+Left Arrow: "No Stopping"
+Right Arrow: "2P Mon-Fri 1pm-6pm"
+Current Time: Tuesday 3pm
+Expected Output:
+FINAL Left Sign - Time: no parking -- Sign Used: No Stopping -- Reason: No parking allowed -- Ticket: No -- Disabled: No
+FINAL Right Sign - Time: 120 -- Sign Used: Mon-Fri 1pm-6pm -- Reason: It is in that time slot -- Ticket: No -- Disabled: No
+
+Scenario 4
+Signs:
+Left Arrow: "3P Sat-Sun"
+Right Arrow: "2P Mon-Fri 1pm-6pm"
+Current Time: Wednesday 10am
+Expected Output:
+FINAL Left Sign - Time: unlimited -- Sign Used: None -- Reason: It is not in any sign’s time slot -- Ticket: No -- Disabled: No
+FINAL Right Sign - Time: unlimited -- Sign Used: None -- Reason: It is not in any sign’s time slot -- Ticket: No -- Disabled: No
+
+Scenario 5
+Signs:
+Left Arrow: "Mail Zone All Other Times"
+Right Arrow: "2P Mon-Fri 1pm-6pm"
+Current Time: Tuesday 3pm
+Expected Output:
+FINAL Left Sign - Time: no parking -- Sign Used: Mail Zone -- Reason: No parking allowed -- Ticket: No -- Disabled: No
+FINAL Right Sign - Time: 120 -- Sign Used: Mon-Fri 1pm-6pm -- Reason: It is in that time slot -- Ticket: No -- Disabled: No
+
+
+Scenario 6: Multiple Signs on Both Sides (Metered Parking)
+Signs:
+Left Arrow:
+"3P Mon-Fri 6am-1pm"
+"2P Mon-Fri 1pm-6pm"
+"4P Sat-Sun"
+ Right Arrow:
+"No Parking Mon-Fri 7am-9am"
+"2P Mon-Fri 9am-6pm ticket"
+"4P Sat-Sun ticket"
+ Current Time: Monday, 10:30am
+Expected Output:
+FINAL Left Sign - Time: 180 -- Sign Used: Mon-Fri 6am-1pm -- Reason: It is in that time slot -- Ticket: No -- Disabled: No
+FINAL Right Sign - Time: 120 -- Sign Used: Mon-Fri 9am-6pm ticket -- Reason: It is in that time slot -- Ticket: Yes -- Disabled: No
+
+Scenario 7: Sign with Both Arrows (Applies to Both Sides)
+Signs:
+Sign with Both Arrows: "3P"
+Current Time: Any
+Expected Output:
+FINAL Left Sign - Time: 180 -- Sign Used: 3P -- Reason: It is in the sign’s time slot -- Ticket: No -- Disabled: No
+FINAL Right Sign - Time: 180 -- Sign Used: 3P -- Reason: It is in the sign’s time slot -- Ticket: No -- Disabled: No
+
+And to remind you again, the current time is:
+Current time: ${new Date().toLocaleString()}
+Current day: ${new Date().toLocaleDateString("en-US", { weekday: "long" })}
+
+
+Thank you so much!
+
+	`;
+
+      let videoStream = null;
+      let timersActive = false;
+      let timerIntervals = [];
+      let statusTimeout = null;
+
+      
+      const coll = document.getElementsByClassName("collapsible");
+      for (let i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function () {
+          this.classList.toggle("active");
+          const content = this.nextElementSibling;
+          if (content.style.maxHeight) {
+            content.style.maxHeight = null;
+          } else {
+            content.style.maxHeight = content.scrollHeight + "px";
+          }
+        });
+      }
+
+      async function initCamera() {
+        try {
+          videoStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "environment" },
+          });
+          video.srcObject = videoStream;
+        } catch (err) {
+          showStatus("Error accessing camera: " + err.message);
+        }
+      }
+
+      function stopCamera() {
+        if (videoStream) {
+          videoStream.getTracks().forEach((track) => track.stop());
+          video.srcObject = null;
+        }
+      }
+
+      function showStatus(message, duration = 3000) {
+        if (statusTimeout) {
+          clearTimeout(statusTimeout);
+        }
+
+        status.textContent = message;
+        status.classList.add("visible");
+
+        statusTimeout = setTimeout(() => {
+          status.classList.remove("visible");
+        }, duration);
+      }
+
+      function updateSignGraph(
+        side,
+        timeValue,
+        signUsed,
+        reason,
+        ticketRequired,
+        disabledOnly
+      ) {
+        const header = side === "left" ? leftSignHeader : rightSignHeader;
+        const timeEl = side === "left" ? leftTime : rightTime;
+        const signEl = side === "left" ? leftSign : rightSign;
+        // const reasonEl = side === "left" ? leftReason : rightReason;
+        const ticketEl = side === "left" ? leftTicket : rightTicket;
+        const disabledEl = side === "left" ? leftDisabled : rightDisabled;
+
+        timeEl.textContent = timeValue;
+        signEl.textContent = signUsed || "N/A";
+        // reasonEl.textContent = reason || "N/A";
+        ticketEl.textContent = ticketRequired ? "Yes" : "No";
+        disabledEl.textContent = disabledOnly ? "Yes" : "No";
+
+        // Color coding based on parking status
+        if (timeValue.toLowerCase() === "no parking" || disabledOnly) {
+          header.className = "sign-header no-parking";
+          header.textContent = side.toUpperCase() + " SIDE - NO PARKING";
+        } else if (ticketRequired) {
+          header.className = "sign-header ticket";
+          header.textContent = side.toUpperCase() + " SIDE - TICKET REQUIRED";
+        } else if (timeValue.toLowerCase() === "unlimited") {
+          header.className = "sign-header allowed";
+          header.textContent = side.toUpperCase() + " SIDE - NO LIMIT";
+        } else if (timeValue.toLowerCase() === "unknown") {
+          header.className = "sign-header no-parking";
+          header.textContent = side.toUpperCase() + " SIDE - NO PARKING";
+        } else {
+          header.className = "sign-header allowed";
+          header.textContent =
+            side.toUpperCase() + " SIDE - " + timeValue + " MIN";
+        }
+      }
+
+      function handleSignResponse(response) {
+        try {
+          // Look for the final sign details in the response
+          const leftSignMatch = response.match(
+            /FINAL Left Sign - Time: ([^ ]+) -- Sign Used: (.*?) -- Reason: (.*?) -- Ticket: (Yes|No) -- Disabled: (Yes|No)/i
+          );
+          const rightSignMatch = response.match(
+            /FINAL Right Sign - Time: ([^ ]+) -- Sign Used: (.*?) -- Reason: (.*?) -- Ticket: (Yes|No) -- Disabled: (Yes|No)/i
+          );
+
+          signGraphs.classList.add("visible");
+
+          let leftOptions = null;
+          let rightOptions = null;
+
+          if (leftSignMatch) {
+            // Parse left sign details
+            const leftTime = leftSignMatch[1];
+            const leftSignUsed = leftSignMatch[2];
+            // const leftReason = leftSignMatch[3];
+            const leftRequiresTicket = leftSignMatch[4] === "Yes";
+            const leftIsDisabled = leftSignMatch[5] === "Yes";
+
+            updateSignGraph(
+              "left",
+              leftTime,
+              leftSignUsed,
+              // leftReason,
+              leftRequiresTicket,
+              leftIsDisabled
+            );
+
+            leftOptions = {
+              time: leftTime,
+              requiresTicket: leftRequiresTicket,
+              isDisabled: leftIsDisabled,
+            };
+          } else {
+            // Default left sign if not found
+            updateSignGraph("left", "No Parking", "", "", false, false);
+          }
+
+          if (rightSignMatch) {
+            // Parse right sign details
+            const rightTime = rightSignMatch[1];
+            const rightSignUsed = rightSignMatch[2];
+            const rightReason = rightSignMatch[3];
+            const rightRequiresTicket = rightSignMatch[4] === "Yes";
+            const rightIsDisabled = rightSignMatch[5] === "Yes";
+
+            updateSignGraph(
+              "right",
+              rightTime,
+              rightSignUsed,
+              rightReason,
+              rightRequiresTicket,
+              rightIsDisabled
+            );
+
+            rightOptions = {
+              time: rightTime,
+              requiresTicket: rightRequiresTicket,
+              isDisabled: rightIsDisabled,
+            };
+          } else {
+            // Default right sign if not found
+            updateSignGraph("right", "No Parking", "", "", false, false);
+          }
+
+          // Show sign selection dialog if both left and right signs are valid
+          if (
+            leftOptions &&
+            rightOptions &&
+            !(leftOptions.isDisabled && rightOptions.isDisabled) &&
+            !(
+              leftOptions.time.toLowerCase() === "no parking" &&
+              rightOptions.time.toLowerCase() === "no parking"
+            )
+          ) {
+            setTimeout(() => {
+              signSelection.classList.add("visible");
+            }, 500);
+
+            leftSignBtn.onclick = () => {
+              signSelection.classList.remove("visible");
+              if (
+                leftOptions.isDisabled ||
+                leftOptions.time.toLowerCase() === "no parking"
+              ) {
+                showStatus("No parking allowed on the left side");
+              } else if (leftOptions.requiresTicket) {
+                showTicketConfirmation(leftOptions.time);
+              } else {
+                handleTimeSelection(leftOptions.time);
+              }
+            };
+
+            rightSignBtn.onclick = () => {
+              signSelection.classList.remove("visible");
+              if (
+                rightOptions.isDisabled ||
+                rightOptions.time.toLowerCase() === "no parking"
+              ) {
+                showStatus("No parking allowed on the right side");
+              } else if (rightOptions.requiresTicket) {
+                showTicketConfirmation(rightOptions.time);
+              } else {
+                handleTimeSelection(rightOptions.time);
+              }
+            };
+          } else if (
+            leftOptions &&
+            !leftOptions.isDisabled &&
+            leftOptions.time.toLowerCase() !== "no parking"
+          ) {
+            // If only left side allows parking
+            if (leftOptions.requiresTicket) {
+              showTicketConfirmation(leftOptions.time);
+            } else {
+              handleTimeSelection(leftOptions.time);
+            }
+          } else if (
+            rightOptions &&
+            !rightOptions.isDisabled &&
+            rightOptions.time.toLowerCase() !== "no parking"
+          ) {
+            // If only right side allows parking
+            if (rightOptions.requiresTicket) {
+              showTicketConfirmation(rightOptions.time);
+            } else {
+              handleTimeSelection(rightOptions.time);
+            }
+          } else {
+            // No parking allowed on either side
+            showStatus("No parking allowed here");
+          }
+        } catch (err) {
+          console.error("Error handling sign response:", err);
+          showStatus("Error interpreting sign. Please retake the photo.");
+        }
+      }
+
+      function showTicketConfirmation(timeStr) {
+        setTimeout(() => {
+          ticketConfirmation.classList.add("visible");
+        }, 500);
+
+        ticketConfirmBtn.onclick = () => {
+          ticketConfirmation.classList.remove("visible");
+          handleTimeSelection(timeStr);
+        };
+      }
+
+      function handleTimeSelection(timeStr) {
+        if (timeStr.toLowerCase() === "no parking") {
+          showStatus("No parking allowed here");
+          return;
+        }
+
+        if (timeStr.toLowerCase() === "unlimited") {
+          showStatus("No time limit for parking here");
+          return;
+        }
+
+        // Start timer for valid parking minutes
+        const minutes = parseInt(timeStr);
+        if (!isNaN(minutes)) {
+          startTimers(minutes);
+          timerCard.style.display = "block";
+          timerCard.classList.add("fade-in");
+          warningTimeEl.classList.add("pulse");
+          showStatus(`Timer set for ${minutes} minutes`);
+        } else {
+          showStatus("Could not determine parking time");
+        }
+      }
+
+      function triggerAlarm() {
+        alarmAudio.src =
+          "https://filesamples.com/samples/audio/mp3/sample2.mp3";
+        alarmAudio.load();
+        alarmAudio.play();
+      }
+
+      captureBtn.addEventListener("click", () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext("2d").drawImage(video, 0, 0);
+
+        capturedImage.src = canvas.toDataURL("image/jpeg");
+        video.style.display = "none";
+        capturedImage.style.display = "block";
+        captureBtn.style.display = "none";
+        retakeBtn.style.display = "block";
+
+        stopCamera();
+
+        silentAudio.play();
+        alarmAudio.play();
+
+        analyzeImage(capturedImage.src);
+
+        const cameraCollapsible = document.querySelector(".camera-collapsible");
+        const cameraContent = document.querySelector(".camera-content");
+
+        cameraContent.classList.remove("open");
+        cameraCollapsible.classList.remove("active");
+      });
+
+      retakeBtn.addEventListener("click", () => {
+        timerIntervals.forEach((interval) => clearInterval(interval));
+        timerIntervals = [];
+        timersActive = false;
+
+        video.style.display = "block";
+        capturedImage.style.display = "none";
+        captureBtn.style.display = "block";
+        retakeBtn.style.display = "none";
+        signSelection.style.display = "none";
+        ticketConfirmation.style.display = "none";
+        signGraphs.style.display = "none";
+        status.style.display = "none";
+        warningTimeEl.textContent = "00:00:00";
+        expiryTimeEl.textContent = "";
+
+        const collapsible = document.querySelector(".collapsible");
+        collapsible.classList.remove("active");
+        const content = document.querySelector(".content");
+        content.style.maxHeight = null;
+        originalText.textContent = "";
+
+        alarmAudio.pause();
+        alarmAudio.currentTime = 0;
+        alarmAudio.src =
+          "https://cdn.glitch.global/16c2e168-5f80-4256-858b-ebbfd77da240/5-seconds-of-silence.mp3?v=1739673346964";
+        alarmAudio.load();
+        const cameraCollapsible = document.querySelector(".camera-collapsible");
+        const cameraContent = document.querySelector(".camera-content");
+
+        cameraContent.classList.add("open");
+        cameraCollapsible.classList.remove("active");
+        initCamera();
+      });
+
+      async function analyzeImage(imageData) {
+        try {
+          status.textContent = "Analyzing image...";
+          status.style.display = "block";
+
+          const response = await fetch(
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyDLE81P8wgkVDgR4wukGUhuXBDEPA14nWM",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                contents: [
+                  {
+                    parts: [
+                      {
+                        text: GEMINI_PROMPT,
+                      },
+                      {
+                        inline_data: {
+                          mime_type: "image/jpeg",
+                          data: imageData.split(",")[1],
+                        },
+                      },
+                    ],
+                  },
+                ],
+              }),
+            }
+          );
+
+          const result = await response.json();
+
+          if (result.error) {
+            throw new Error(result.error.message || "API Error");
+          }
+
+          if (
+            !result.candidates ||
+            !result.candidates[0].content ||
+            !result.candidates[0].content.parts
+          ) {
+            throw new Error("Unexpected API response structure");
+          }
+
+          const text = result.candidates[0].content.parts[0].text;
+          originalText.textContent = text;
+
+          handleSignResponse(text);
+        } catch (err) {
+          console.error("Analysis error:", err);
+          status.textContent =
+            "Error: " + (err.message || "Failed to analyze image");
+          status.style.display = "block";
+        }
+      }
+
+      function startTimers(totalMinutes) {
+        if (timersActive) {
+          timerIntervals.forEach((interval) => clearInterval(interval));
+          timerIntervals = [];
+        }
+
+        const warningMinutes = totalMinutes - 15;
+        const now = Date.now();
+        const warningEnd = now + warningMinutes * 60 * 1000;
+        const parkingEnd = now + totalMinutes * 60 * 1000;
+
+        const expiryDate = new Date(parkingEnd);
+        expiryTimeEl.textContent = `Expires at: ${expiryDate.toLocaleTimeString()}`;
+
+        function updateTimers() {
+          const current = Date.now();
+
+          if (current < warningEnd) {
+            updateTimeDisplay(warningTimeEl, warningEnd - current);
+          } else if (current < parkingEnd) {
+            warningTimeEl.textContent = "00:00:00";
+            triggerAlarm();
+          } else {
+            warningTimeEl.textContent = "00:00:00";
+          }
+        }
+
+        timerIntervals.push(setInterval(updateTimers, 1000));
+        updateTimers();
+        timersActive = true;
+      }
+
+      function updateTimeDisplay(element, timeLeft) {
+        if (timeLeft <= 0) {
+          element.textContent = "00:00:00";
+          return;
+        }
+        const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        element.textContent = `${hours.toString().padStart(2, "0")}:${minutes
+          .toString()
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+      }
+      document.getElementById("infoIcon").addEventListener("click", () => {
+        document.getElementById("disclaimerModal").classList.toggle("visible");
+      });
+
+      document.addEventListener("click", (e) => {
+        const infoIcon = document.getElementById("infoIcon");
+        const disclaimerModal = document.getElementById("disclaimerModal");
+
+        if (
+          !infoIcon.contains(e.target) &&
+          !disclaimerModal.contains(e.target) &&
+          disclaimerModal.classList.contains("visible")
+        ) {
+          disclaimerModal.classList.remove("visible");
+        }
+      });
+
+      initCamera();
+    </script>
+  </body>
+</html>
