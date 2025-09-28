@@ -1,0 +1,2207 @@
+<!-- 
+License
+
+Copyright 2025 Ka Hei Chan and Shellcraft Studios. Unauthorized copying is prohibited.
+
+ParkEase and all associated content, code, and intellectual property are protected under copyright law. Unauthorized use, reproduction, distribution, or modification of this project, in whole or in part, is strictly prohibited without prior written consent from the copyright holder.
+
+Permissions
+- Viewing: You are allowed to view the content and code for personal or educational purposes.
+- Forking: Forking this repository is not allowed. Please contact me at 2uh114cu@duck.me 
+
+Restrictions
+- Commercial Use: You may not use this project or any derivative works for commercial purposes without explicit permission.
+- Distribution: You may not distribute, publish, or sell any part of this project without prior written consent.
+- Modification: You may not modify, adapt, or create derivative works without explicit permission.
+
+Attribution
+If you use or reference this project in any way, you must provide proper attribution by linking back to the original repository:  
+[ParkEase Repository](https://github.com/kaheichanturtle/Parkease)
+
+Legal Notice
+Any unauthorized use of this project may result in legal action. For inquiries regarding permissions, licensing, or collaborations, please contact us at 2uh114cu@duck.com.
+
+---
+Copyright © 2025 Ka Hei Chan. All rights reserved.
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>ParkEase</title>
+    <meta name="theme-color" content="#4a90e2" />
+    <link rel="manifest" href="/manifest.json" />
+    <link
+      rel="apple-touch-icon"
+      href="https://cdn.glitch.global/cbdf53ed-1d1e-441b-8c47-ff223e3a04c8/android-launchericon-192-192.png?v=1741136144106"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="https://cdn.glitch.global/cbdf53ed-1d1e-441b-8c47-ff223e3a04c8/android-launchericon-192-192.png?v=1741136144106"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <style>
+      :root {
+        --primary: #4a90e2;
+        --primary-light: #7eb4ff;
+        --primary-dark: #2d6fc8;
+        --text: #333333;
+        --text-light: #666666;
+        --background: #f8f9fa;
+        --card: #ffffff;
+        --success: #34c759;
+        --warning: #ffcc00;
+        --danger: #ff3b30;
+        --disabled-blue: #007bff;
+        --gray: #e0e0e0;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --radius: 20px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --bottom-nav-height: 70px;
+        
+        --c-glass: #bbbbbc;
+        --c-light: #fff;
+        --c-dark: #000;
+        --c-bg: var(--background);
+        --glass-reflex-dark: 1;
+        --glass-reflex-light: 1;
+        --saturation: 150%;
+        --toggle-checked: var(--primary);
+        --toggle-unchecked: #d1d1d6;
+      }
+      body.dark-mode {
+        --primary: #58a6ff;
+        --primary-light: #79b8ff;
+        --primary-dark: #388bfd;
+        --text: #c9d1d9;
+        --text-light: #8b949e;
+        --background: #0d1117;
+        --card: #161b22;
+        --success: #238636;
+        --warning: #e3b341;
+        --danger: #da3633;
+        --disabled-blue: #1f6feb;
+        --gray: #21262d;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+        --c-glass: #bbbbbc;
+        --c-bg: #1b1b1d;
+        --glass-reflex-dark: 2;
+        --glass-reflex-light: 0.3;
+        --saturation: 150%;
+        --toggle-unchecked: #3a3a3c;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+      :focus:not(:focus-visible) {
+          outline: none;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
+      body {
+        background-color: var(--background);
+        color: var(--text);
+        overscroll-behavior-y: contain;
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      .app-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        background-color: transparent;
+        position: relative;
+      }
+
+      .page {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 16px;
+        padding-bottom: calc(var(--bottom-nav-height) + 24px);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+      }
+      .page.active {
+        display: flex;
+      }
+      #analysis-view {
+        justify-content: center;
+        text-align: center;
+      }
+      .spinner {
+        border: 4px solid var(--gray);
+        border-top: 4px solid var(--primary);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px auto;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      #analysis-view h2 {
+        color: var(--text);
+        font-size: 18px;
+      }
+      #analysis-view p {
+        color: var(--text-light);
+        font-size: 14px;
+        margin-top: 8px;
+      }
+       
+       #camera-container {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        border-radius: var(--radius);
+        overflow: hidden;
+        background: var(--gray);
+        box-shadow: var(--shadow);
+        margin: 0 auto 16px;
+        aspect-ratio: 9 / 16;
+        max-height: 65vh;
+      }
+      #video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.2s linear;
+      }
+      #zoom-controls {
+        padding: 10px 0;
+        text-align: center;
+        width: 100%;
+      }
+      #zoom-slider {
+        width: 70%;
+      }
+      #captureBtn {
+        width: 70px;
+        height: 70px;
+        font-size: 28px;
+        padding: 0;
+        margin: 0 auto;
+      }
+      #captureBtn i {
+        margin: 0;
+      }
+
+      .glass-effect {
+        position: relative;
+        isolation: isolate;
+        background-color: color-mix(in srgb, var(--card) 40%, transparent);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      }
+      .glass-effect::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        backdrop-filter: blur(8px) saturate(1.2);
+        -webkit-backdrop-filter: blur(8px) saturate(1.2);
+        z-index: -1;
+      }
+
+      #results-view {
+        justify-content: center;
+        gap: 16px;
+      }
+      .sign-card {
+        border-radius: var(--radius);
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin-bottom: 16px;
+        border-left: 5px solid var(--gray);
+      }
+      .sign-card.allowed { border-left-color: var(--success); }
+      .sign-card.ticket { border-left-color: var(--warning); }
+      .sign-card.no-parking { border-left-color: var(--danger); }
+      .sign-card.disabled-allowed { border-left-color: var(--disabled-blue); }
+
+      .sign-header {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: var(--text);
+      }
+      .sign-main-rule {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: var(--primary);
+        text-align: center;
+      }
+      .sign-card.no-parking .sign-main-rule { color: var(--danger); }
+
+      .sign-details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+      }
+      .detail-item i {
+        color: var(--primary);
+        width: 20px;
+        text-align: center;
+      }
+      .sign-card-buttons {
+        margin-top: auto;
+        display: flex;
+        gap: 10px;
+      }
+      .sign-card-buttons .button {
+        flex: 1;
+        padding: 10px;
+        font-size: 14px;
+      }
+      #ai-response-container {
+        width: 100%;
+        border: 1px solid var(--gray);
+        border-radius: var(--radius);
+        padding: 12px;
+        margin-top: 16px;
+      }
+      #ai-response-container h4 {
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: var(--primary);
+      }
+      #ai-response-text {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-size: 12px;
+        color: var(--text-light);
+        max-height: 150px;
+        overflow-y: auto;
+      }
+
+      #timer-view {
+        justify-content: center;
+        text-align: center;
+      }
+      .timer-card {
+        border-radius: var(--radius);
+        padding: 24px;
+        width: 100%;
+        max-width: 350px;
+        margin-bottom: 20px;
+      }
+      .timer-label {
+        font-size: 16px;
+        color: var(--text-light);
+        margin-bottom: 8px;
+      }
+      .time-display {
+        font-size: 48px;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 8px;
+        letter-spacing: 2px;
+      }
+      .expires-at {
+        font-size: 16px;
+        color: var(--text-light);
+      }
+       #map-section {
+        height: 250px;
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        width: 100%;
+        max-width: 350px;
+        margin-top: 20px;
+      }
+      #map {
+        height: 100%;
+        width: 100%;
+      }
+      #stopTimerBtn, #openInMapsBtn {
+         width: 100%;
+         max-width: 350px;
+      }
+
+      .button-container {
+        padding: 0 0 16px 0;
+        width: 100%;
+        text-align: center;
+      }
+      .button {
+        margin-top: 12px;
+      }
+      
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease-in-out;
+      }
+      .modal.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal-content {
+        width: 90%;
+        max-width: 400px;
+        border-radius: var(--radius);
+        padding: 24px;
+        transform: scale(0.95);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        max-height: 85vh;
+        overflow-y: auto;
+        position: relative;
+      }
+      .modal.visible .modal-content { transform: scale(1); }
+      .modal-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        text-align: center;
+        color: var(--text);
+      }
+      .modal p {
+        font-size: 14px;
+        color: var(--text-light);
+        text-align: center;
+        line-height: 1.5;
+        margin-bottom: 20px;
+      }
+      .modal-close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: var(--text-light);
+        cursor: pointer;
+        line-height: 1;
+        padding: 5px;
+      }
+      .modal-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .modal-button { flex: 1; }
+      #ticket-time-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+        gap: 10px;
+      }
+      .time-option-btn {
+        background-color: var(--gray);
+        color: var(--text);
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.2s;
+        text-align: center;
+      }
+      .time-option-btn:hover {
+        background-color: var(--primary);
+        color: white;
+      }
+      .edit-input-group {
+        margin-bottom: 15px;
+      }
+      .edit-input-group label {
+        display: block;
+        font-size: 14px;
+        color: var(--text-light);
+        margin-bottom: 5px;
+      }
+      .edit-input-group input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid var(--gray);
+        background: var(--background);
+        color: var(--text);
+        font-size: 16px;
+      }
+
+      .settings-section, .history-section {
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--gray);
+        padding-bottom: 16px;
+        width: 100%;
+      }
+      .settings-section:last-child, .history-section:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+      .page-header {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 24px;
+        text-align: center;
+        width: 100%;
+      }
+      .settings-section h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: var(--primary);
+      }
+      .setting-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .setting-item label {
+        font-size: 14px;
+        color: var(--text);
+        margin-right: 10px;
+      }
+      .setting-item input[type="number"] {
+        width: 60px;
+        padding: 5px;
+        border-radius: 6px;
+        border: 1px solid var(--gray);
+        background: var(--background);
+        color: var(--text);
+      }
+      
+      #history-list {
+        list-style: none;
+        padding: 0;
+        width: 100%;
+      }
+      #history-list li {
+        background: var(--card);
+        padding: 12px 16px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        font-size: 13px;
+        cursor: pointer;
+        border: 1px solid var(--gray);
+        transition: background-color 0.2s;
+      }
+      #history-list li:hover { background: var(--gray); }
+      .history-entry span {
+        display: block;
+        margin-bottom: 4px;
+      }
+      .history-entry .date { font-weight: 600; }
+      .history-entry .details { color: var(--text-light); font-size: 12px; }
+      #historyDetailModal .modal-content {}
+      #history-detail-map {
+        height: 150px;
+        width: 100%;
+        margin-bottom: 10px;
+        border-radius: var(--radius);
+      }
+      #history-detail-content p { text-align: left; margin-bottom: 8px; font-size: 14px; }
+      #history-detail-content p strong { color: var(--text); }
+      
+      .status-message {
+        position: fixed;
+        bottom: calc(var(--bottom-nav-height) + 10px);
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 10px 20px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+        z-index: 900;
+        transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        pointer-events: none;
+        opacity: 0;
+        text-align: center;
+        max-width: 90%;
+        transform: translateX(-50%) translateY(100px);
+      }
+      .status-message.visible {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+
+      .current-location-marker {
+        background-color: #3498db;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 2px solid white;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+      }
+      .saved-location-marker {
+        background-color: #e74c3c;
+        width: 20px;
+        height: 20px;
+        border-radius: 50% 50% 50% 0;
+        border: 2px solid white;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        transform: rotate(-45deg);
+      }
+      .leaflet-div-icon { background: none; border: none; }
+      
+      .pulse { animation: pulse 2s infinite; }
+      @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 40%, transparent); }
+        70% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--primary) 0%, transparent); }
+        100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 0%, transparent); }
+      }
+
+      @layer normalize, base, demo, toggle, debug, transitions;
+      @layer transitions {
+          :root {
+              --transition: 0.2s;
+              --ease: ease-out;
+          }
+          [data-bounce='true']:has(button:active,[data-active=true]) {
+              --transition: 0.6s;
+              --ease: linear(0 0%,0.6091 3.69%,1.0259 7.24%,1.1733 9.05%,1.283 10.92%,1.3562 12.87%,1.3948 14.95%,1.4014 16.03%,1.3999 17.16%,1.3731 19.64%,1.3202 22.27%,1.1394 29.39%,1.0582 33.17%,0.9943 37.45%,0.9734 39.64%,0.9593 41.92%,0.9505 45.08%,0.9517 48.7%,0.9924 63.02%,1.0046 71.2%,1.0061 78.24%,1 100%);
+          }
+          .indicator--masked .mask {
+              translate: calc((var(--complete) / 100) * (100cqi - 60cqi - (0 * var(--border)))) -50%;
+              transition-property: height, width, margin, scale;
+              transition-duration: var(--transition);
+              transition-timing-function: var(--ease);
+              will-change: height, width, margin;
+          }
+          .wrapper {
+              clip-path: inset(0 0 0 0 round 100px);
+              filter: blur(6px);
+              transition: filter var(--transition) var(--ease);
+          }
+          [aria-pressed='true']:not([data-active='true']) .liquid__track {
+              left: calc(var(--border) * 6);
+          }
+          .liquid__track {
+              left: 0;
+              transition-property: height, width, filter, left;
+              transition-duration: var(--transition);
+              transition-timing-function: var(--ease);
+              translate: calc((var(--complete) / 100) * (100cqi - 100% - (6 * var(--border)))) -50%;
+          }
+          .indicator__liquid {
+              translate: calc((var(--complete) / 100) * (100cqi - 100% - (2 * var(--border)))) -50%;
+              transition-property: scale;
+              transition-duration: var(--transition);
+              transition-timing-function: var(--ease);
+          }
+          .indicator__liquid :is(.cover, .shadow) {
+              transition: opacity var(--transition) var(--ease);
+          }
+          [data-active='true'] .indicator--masked .mask,
+          .liquid-toggle:active .indicator--masked .mask {
+              height: calc((100% - (2 * var(--border))) * 1.65);
+              width: calc((60% - (2 * var(--border))) * 1.65);
+              margin-left: calc((60% - (2 * var(--border))) * -0.325);
+          }
+          [data-active='true'] .indicator__liquid,
+          .liquid-toggle:active .indicator__liquid {
+              scale: 1.65;
+          }
+          [data-active='true'] .wrapper,
+          .liquid-toggle:active .wrapper {
+              filter: blur(0px);
+          }
+          [data-active='true'] .indicator__liquid .shadow,
+          .liquid-toggle:active .indicator__liquid .shadow {
+              opacity: 1;
+          }
+          [data-active='true'] .indicator__liquid .cover,
+          .liquid-toggle:active .indicator__liquid .cover {
+              opacity: 0;
+          }
+          [data-active='true'] .indicator__liquid .liquid__track,
+          .liquid-toggle:active .indicator__liquid .liquid__track {
+              left: calc(var(--border) * 3);
+              height: calc((var(--height) * 1px) - (6 * var(--border)));
+          }
+      }
+      @layer toggle {
+          .liquid-toggle {
+              --unchecked: var(--toggle-unchecked);
+              --checked: var(--toggle-checked);
+              --control: hsl(300, 100%, 100%);
+              --border: 3px;
+              --width: 50;
+              --height: 25;
+              height: calc(var(--height) * 1px);
+              width: calc(var(--width) * 1px);
+              border-radius: 100px;
+              border: 0;
+              padding: 0;
+              cursor: pointer;
+              position: relative;
+              overflow: visible;
+              container-type: inline-size;
+              background: var(--unchecked);
+              transition: background-color var(--transition) var(--ease), outline var(--transition) var(--ease);
+              outline-offset: 2px;
+              flex-shrink: 0;
+          }
+          .liquid-toggle[aria-pressed='true'] {
+              background: var(--checked);
+          }
+          .liquid-toggle:focus-visible {
+              outline: 4px solid color-mix(in oklch, var(--checked), #0000);
+          }
+          .liquid-toggle:active { outline: none; }
+          .liquid-toggle[data-active='true']:focus-visible { outline: 4px solid #0000; }
+          .indicator {
+              border-radius: 100px;
+              pointer-events: none;
+              height: 100%;
+              width: 100%;
+              background: transparent;
+              position: absolute;
+              top: 50%;
+              scale: 1;
+              left: 50%;
+              translate: -50% -50%;
+          }
+          .knockout {
+              height: calc(var(--height) * 1px);
+              width: calc(var(--width) * 1px);
+              border-radius: 100px;
+              filter: url(#remove-black);
+              position: absolute;
+              inset: 0;
+              will-change: filter, scale;
+              transform: translate3d(0, 0, 0);
+          }
+          .indicator--masked {
+              background: transparent;
+              z-index: 12;
+              height: 100%;
+              width: 100%;
+              translate: -50% -50%;
+              container-type: inline-size;
+          }
+          .indicator--masked .mask {
+              position: absolute;
+              height: calc(100% - (2 * var(--border)));
+              width: calc(60% - (2 * var(--border)));
+              top: 50%;
+              background: #000;
+              left: var(--border);
+              border-radius: 100px;
+          }
+          .wrapper {
+              position: absolute;
+              inset: 0;
+              border-radius: 100px;
+          }
+          .liquids {
+              position: absolute;
+              inset: 0;
+              transform: translate3d(0, 0, 0);
+              border-radius: 100px;
+              overflow: hidden;
+              filter: url(#goo);
+          }
+          .liquids .liquid__shadow {
+              position: absolute;
+              inset: 0;
+              box-shadow: inset 0px 0px 3px 4px var(--checked), inset calc(((var(--complete) / 100) * 8px) + -4px) 0px 3px 4px var(--checked);
+              border-radius: 100px;
+          }
+          .liquids .liquid__track {
+              content: '';
+              height: calc((var(--height) * 1px) - (0 * var(--border)));
+              width: calc((var(--width) * 1px) - (0 * var(--border)));
+              background: var(--checked);
+              border-radius: 100px;
+              position: absolute;
+              top: 50%;
+          }
+          .indicator__liquid {
+              position: absolute;
+              height: calc(100% - (2 * var(--border)));
+              width: calc(60% - (2 * var(--border)));
+              container-type: inline-size;
+              top: 50%;
+              background: #0000;
+              left: var(--border);
+              border-radius: 100px;
+          }
+          .indicator__liquid .shadow {
+              opacity: 0;
+              content: '';
+              position: absolute;
+              inset: 0;
+              border-radius: 100px;
+              box-shadow: 1px -1px 2px hsl(0 0% 100% / 0.5) inset, 0px -1px 2px hsl(0 0% 100% / 0.5) inset, -1px -1px 2px hsl(0 0% 100% / 0.5) inset, 1px 1px 2px hsl(0 0% 30% / 0.5) inset, -8px 4px 10px -6px hsl(0 0% 30% / 0.25) inset, -1px 1px 6px hsl(0 0% 30% / 0.25) inset, -1px -1px 8px hsl(0 0% 60% / 0.15), 1px 1px 2px hsl(0 0% 30% / 0.15), 2px 2px 6px hsl(0 0% 30% / 0.15), -2px -1px 2px hsl(0 0% 100% / 0.25) inset, 3px 6px 16px -6px hsl(0 0% 30% / 0.5);
+              z-index: 20;
+          }
+          .indicator__liquid .cover {
+              content: '';
+              position: absolute;
+              inset: 0;
+              background: white;
+              border-radius: 100px;
+          }
+      }
+
+      .bottom-nav {
+          position: fixed;
+          bottom: 16px;
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          width: 300px;
+          max-width: 90%;
+          height: 64px;
+          box-sizing: border-box;
+          padding: 8px 12px;
+          border: none;
+          border-radius: 99em;
+          background-color: color-mix(in srgb, var(--c-glass) 12%, transparent);
+          backdrop-filter: blur(8px) url(#switcher) saturate(var(--saturation));
+          -webkit-backdrop-filter: blur(8px) saturate(var(--saturation));
+          box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent), inset 1.8px 3px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent), inset -2px -2px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent), inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent), inset -0.3px -1px 4px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent), inset -1.5px 2.5px 0px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), inset 0px 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 0px 1px 5px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 0px 6px 16px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
+          transition: background-color 400ms cubic-bezier(1, 0.0, 0.4, 1), box-shadow 400ms cubic-bezier(1, 0.0, 0.4, 1);
+          z-index: 600;
+      }
+      .nav-legend { display: none; }
+      .nav-input { display: none; }
+      .nav-btn {
+          --c: var(--text-light);
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          gap: 2px;
+          padding: 0;
+          width: 86px;
+          height: 100%;
+          box-sizing: border-box;
+          border-radius: 99em;
+          opacity: 1;
+          transition: all 160ms;
+          color: var(--c);
+      }
+      .nav-btn i {
+          font-size: 20px;
+      }
+      .nav-btn span {
+          font-size: 10px;
+          font-weight: 500;
+      }
+      .nav-btn:hover {
+          --c: var(--primary);
+          cursor: pointer;
+      }
+      .nav-btn:hover i { transform: scale(1.2); }
+      .nav-btn:has(input:checked) {
+          --c: var(--primary);
+          cursor: auto;
+      }
+      .nav-btn:has(input:checked) i { transform: scale(1); }
+      .bottom-nav::after {
+          content: '';
+          position: absolute;
+          left: 6px;
+          top: 5px;
+          display: block;
+          width: 96px;
+          height: calc(100% - 10px);
+          border-radius: 99em;
+          background-color: color-mix(in srgb, var(--c-glass) 36%, transparent);
+          z-index: -1;
+          box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent), inset 2px 1px 0px -1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent), inset -1.5px -1px 0px -1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent), inset -2px -6px 1px -5px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent), inset -1px 2px 3px -1px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), inset 0px -4px 1px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 0px 3px 6px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
+      }
+      .bottom-nav:has(input[c-option="1"]:checked)::after {
+          translate: 0 0;
+          transform-origin: right;
+          transition: background-color 400ms cubic-bezier(1, 0.0, 0.4, 1), box-shadow 400ms cubic-bezier(1, 0.0, 0.4, 1), translate 400ms cubic-bezier(1, 0.0, 0.4, 1);
+          animation: scaleToggle 440ms ease;
+      }
+      .bottom-nav:has(input[c-option="2"]:checked)::after {
+          translate: 94px 0;
+          transition: background-color 400ms cubic-bezier(1, 0.0, 0.4, 1), box-shadow 400ms cubic-bezier(1, 0.0, 0.4, 1), translate 400ms cubic-bezier(1, 0.0, 0.4, 1);
+          animation: scaleToggle2 440ms ease;
+      }
+      .bottom-nav[c-previous="1"]:has(input[c-option="2"]:checked)::after { transform-origin: left; }
+      .bottom-nav[c-previous="3"]:has(input[c-option="2"]:checked)::after { transform-origin: right; }
+      .bottom-nav:has(input[c-option="3"]:checked)::after {
+          translate: 188px 0;
+          transform-origin: left;
+          transition: background-color 400ms cubic-bezier(1, 0.0, 0.4, 1), box-shadow 400ms cubic-bezier(1, 0.0, 0.4, 1), translate 400ms cubic-bezier(1, 0.0, 0.4, 1);
+          animation: scaleToggle3 440ms ease;
+      }
+      @keyframes scaleToggle { 0% { scale: 1 1; } 50% { scale: 1.1 1; } 100% { scale: 1 1; } }
+      @keyframes scaleToggle2 { 0% { scale: 1 1; } 50% { scale: 1.2 1; } 100% { scale: 1 1; } }
+      @keyframes scaleToggle3 { 0% { scale: 1 1; } 50% { scale: 1.1 1; } 100% { scale: 1 1; } }
+
+      .liquid-glass-button {
+          position: relative;
+          padding: 0.75rem 1.5rem;
+          border-radius: 100vmax;
+          border: none;
+          isolation: isolate;
+          background-color: rgba(255, 255, 255, 0.25);
+          color: var(--text);
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+          font-size: 1rem;
+          font-weight: 600;
+          box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1);
+          text-align: center;
+          user-select: none;
+          cursor: pointer;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+      }
+      .liquid-glass-button i { margin-right: 8px; }
+      .liquid-glass-button:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 10px 10px rgba(0, 0, 0, 0.25), 0 0 25px rgba(0, 0, 0, 0.15);
+      }
+      .liquid-glass-button:active { transform: translateY(1px); }
+      .liquid-glass-button::before,
+      .liquid-glass-button::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: inherit;
+      }
+      .liquid-glass-button::before {
+          backdrop-filter: blur(3px);
+          -webkit-backdrop-filter: blur(3px);
+          filter: url(#glass-distortion);
+          z-index: -1;
+      }
+      .liquid-glass-button::after {
+          box-shadow: inset 2px 2px 1px 0 rgba(255, 255, 255, 0.5), inset -1px -1px 1px 1px rgba(255, 255, 255, 0.5);
+      }
+      .liquid-glass-button.primary { color: var(--primary); }
+      .liquid-glass-button.danger { color: var(--danger); }
+      .liquid-glass-button.secondary { color: var(--text-light); }
+      .liquid-glass-button.edit-button { color: var(--text); }
+      
+      .liquid-glass-button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          transform: none;
+          box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1);
+          color: var(--text-light);
+      }
+    </style>
+  </head>
+  <body>
+    <div style="height:0; width:0; position:absolute; visibility:hidden;">
+        <svg xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="goo">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="13" result="blur"></feGaussianBlur>
+              <feColorMatrix in="blur" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 13 -10" type="matrix" result="goo"></feColorMatrix>
+              <feComposite in="SourceGraphic" in2="goo" operator="atop"></feComposite>
+            </filter>
+            <filter id="remove-black" color-interpolation-filters="sRGB">
+              <feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 -255 -255 -255 0 1" result="black-pixels" />
+              <feMorphology in="black-pixels" operator="dilate" radius="0.5" result="smoothed" />
+              <feComposite in="SourceGraphic" in2="smoothed" operator="out" />
+            </filter>
+            <filter id="switcher" primitiveUnits="objectBoundingBox">
+              <feImage result="map" width="100%" height="100%" x="0" y="0" href="data:image/webp;base64,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_A=="/>
+              <feGaussianBlur in="SourceGraphic" stdDeviation="0.04" result="blur"/>
+              <feDisplacementMap id="disp" in="blur" in2="map" scale="0.5" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+            </filter>
+            <filter id="glass-distortion" x="0%" y="0%" width="100%" height="100%" filterUnits="objectBoundingBox">
+                <feTurbulence type="fractalNoise" baseFrequency="0.001 0.005" numOctaves="1" seed="17" result="turbulence"/>
+                <feComponentTransfer in="turbulence" result="mapped">
+                    <feFuncR type="gamma" amplitude="1" exponent="10" offset="0.5" />
+                    <feFuncG type="gamma" amplitude="0" exponent="1" offset="0" />
+                    <feFuncB type="gamma" amplitude="0" exponent="1" offset="0.5" />
+                </feComponentTransfer>
+                <feGaussianBlur in="turbulence" stdDeviation="3" result="softMap" />
+                <feSpecularLighting in="softMap" surfaceScale="5" specularConstant="1" specularExponent="100" lighting-color="white" result="specLight">
+                    <fePointLight x="-200" y="-200" z="300" />
+                </feSpecularLighting>
+                <feComposite in="specLight" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litImage" />
+                <feDisplacementMap in="SourceGraphic" in2="softMap" scale="200" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+          </defs>
+        </svg>
+    </div>
+
+    <div class="app-container">
+      <div id="camera-view" class="page active">
+        <div id="camera-container">
+            <video id="video" autoplay playsinline muted></video>
+        </div>
+        <div id="zoom-controls">
+            <i class="fa-solid fa-magnifying-glass-minus"></i>
+            <input type="range" id="zoom-slider" min="1" max="4" step="0.1" value="1">
+            <i class="fa-solid fa-magnifying-glass-plus"></i>
+        </div>
+        <div class="button-container">
+          <button id="captureBtn" class="button liquid-glass-button primary">
+            <i class="fas fa-camera"></i>
+          </button>
+        </div>
+        <canvas id="canvas" style="display: none"></canvas>
+      </div>
+
+      <div id="analysis-view" class="page">
+        <div class="spinner"></div>
+        <h2>Analyzing Sign...</h2>
+        <p>ParkEase is interpreting the parking rules.</p>
+        <img id="capturedImage" alt="Captured parking sign" style="display:none;" />
+      </div>
+
+      <div id="results-view" class="page">
+        <div class="sign-card glass-effect" id="leftSignCard">
+            <div class="sign-header" id="leftSignHeader">LEFT SIDE</div>
+            <div class="sign-main-rule" id="leftTime">--</div>
+            <div class="sign-details-grid">
+                <div class="detail-item"><i class="fa-solid fa-signs-post"></i> <span id="leftSign">--</span></div>
+                <div class="detail-item"><i class="fa-solid fa-ticket"></i> <span id="leftTicket">--</span></div>
+                <div class="detail-item"><i class="fa-solid fa-wheelchair"></i> <span id="leftDisabled">--</span></div>
+            </div>
+            <div class="sign-card-buttons">
+                <button class="button liquid-glass-button edit-button" id="leftEditBtn"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+                <button class="button liquid-glass-button primary" id="leftStartBtn" disabled><i class="fa-solid fa-stopwatch"></i> Start Timer</button>
+            </div>
+        </div>
+        <div class="sign-card glass-effect" id="rightSignCard">
+            <div class="sign-header" id="rightSignHeader">RIGHT SIDE</div>
+            <div class="sign-main-rule" id="rightTime">--</div>
+            <div class="sign-details-grid">
+                <div class="detail-item"><i class="fa-solid fa-signs-post"></i> <span id="rightSign">--</span></div>
+                <div class="detail-item"><i class="fa-solid fa-ticket"></i> <span id="rightTicket">--</span></div>
+                <div class="detail-item"><i class="fa-solid fa-wheelchair"></i> <span id="rightDisabled">--</span></div>
+            </div>
+            <div class="sign-card-buttons">
+                <button class="button liquid-glass-button edit-button" id="rightEditBtn"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+                <button class="button liquid-glass-button primary" id="rightStartBtn" disabled><i class="fa-solid fa-stopwatch"></i> Start Timer</button>
+            </div>
+        </div>
+        <div id="ai-response-container" class="glass-effect" style="display: none;">
+            <h4>AI Raw Response:</h4>
+            <pre id="ai-response-text"></pre>
+        </div>
+         <div class="button-container">
+          <button id="retakeBtn" class="button liquid-glass-button danger">
+            <i class="fas fa-redo"></i> Retake Photo
+          </button>
+        </div>
+      </div>
+
+      <div id="timer-view" class="page">
+        <div class="timer-card glass-effect">
+            <div class="timer-label">Time Until Reminder</div>
+            <div id="warningTime" class="time-display">00:00:00</div>
+            <div id="expiryTime" class="expires-at"></div>
+        </div>
+        <div id="map-section">
+            <div id="map"></div>
+        </div>
+        <a id="openInMapsBtn" class="button liquid-glass-button secondary" target="_blank" rel="noopener noreferrer" style="display: none;"><i class="fa-solid fa-map-location-dot"></i> Open in Google Maps</a>
+        <button id="stopTimerBtn" class="button liquid-glass-button danger"><i class="fa-solid fa-hand"></i> Stop Timer</button>
+      </div>
+
+      <div id="history-page" class="page">
+          <h2 class="page-header">Parking History</h2>
+          <ul id="history-list">
+              <li style="text-align: center; color: var(--text-light)">Loading history...</li>
+          </ul>
+          <button id="clearHistoryBtn" class="button liquid-glass-button danger" style="font-size: 14px; padding: 10px; margin-top: 15px;">Clear History</button>
+      </div>
+      
+      <div id="settings-page" class="page">
+          <h2 class="page-header">Settings</h2>
+          <div class="settings-section">
+              <h3>Appearance</h3>
+              <div class="setting-item">
+                  <label for="darkModeToggle">Dark Mode</label>
+                  <button aria-label="Dark Mode Toggle" aria-pressed="false" class="liquid-toggle" id="darkModeToggle"></button>
+              </div>
+          </div>
+          <div class="settings-section">
+              <h3>Accessibility</h3>
+              <div class="setting-item">
+                  <label for="disabilityToggle">Disability Permit</label>
+                  <button aria-label="Disability Permit Toggle" aria-pressed="false" class="liquid-toggle" id="disabilityToggle"></button>
+              </div>
+              <p style="font-size: 12px; color: var(--text-light); margin-top: 5px;">Enable if you have a valid permit.</p>
+          </div>
+           <div class="settings-section">
+              <h3>Timer</h3>
+              <div class="setting-item">
+                  <label for="warningTimeInput">Alarm Warning Time (minutes)</label>
+                  <input type="number" id="warningTimeInput" min="0" value="15">
+              </div>
+               <p style="font-size: 12px; color: var(--text-light); margin-top: 5px;">Set how many minutes before expiry the alarm should sound. Default is 15.</p>
+          </div>
+          <div class="settings-section">
+              <h3>Developer</h3>
+               <div class="setting-item">
+                  <label for="showAiResponseToggle">Show AI Response</label>
+                  <button aria-label="Show AI Response Toggle" aria-pressed="false" class="liquid-toggle" id="showAiResponseToggle"></button>
+              </div>
+              <p style="font-size: 12px; color: var(--text-light); margin-top: 5px;">Shows the raw AI analysis text on the results page.</p>
+          </div>
+          <div class="settings-section">
+              <h3>Disclaimer</h3>
+              <p style="font-size: 14px; margin-bottom: 10px;">
+                  ParkEase may be inaccurate. Follow local laws to avoid fines. We are not liable for errors, and you waive any legal actions against us.
+              </p>
+              <a href="https://kaheichan.neocities.org/privacyandterms" target="_blank" style="color: var(--primary); text-decoration: underline; font-size: 14px; display: block; margin-bottom: 10px;">
+                  View Terms and Conditions
+              </a>
+              <p style="font-size: 10px; color: var(--text-light);">Version: v12.7 (Liquid Glass, Fixed bugs) - Last updated: Sept 28, 2025</p>
+              <p style="font-size: 10px; color: var(--text-light);">
+                  Made by KH @ <a href="https://kaheichan.neocities.org" target="_blank" style="color: var(--primary);"> Shellcraft </a>
+              </p>
+          </div>
+      </div>
+
+      <fieldset class="bottom-nav">
+        <legend class="nav-legend">Choose Page</legend>
+        <label class="nav-btn">
+            <input class="nav-input" type="radio" name="nav" value="home" c-option="1" checked/>
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </label>
+        <label class="nav-btn">
+            <input class="nav-input" type="radio" name="nav" value="history" c-option="2" />
+            <i class="fas fa-clock-rotate-left"></i>
+            <span>History</span>
+        </label>
+        <label class="nav-btn">
+            <input class="nav-input" type="radio" name="nav" value="settings" c-option="3" />
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </label>
+      </fieldset>
+
+      <div id="status" class="status-message"></div>
+    </div>
+
+    <div id="trial-popup" class="modal">
+        <div class="modal-content glass-effect">
+            <h2 class="modal-title">Welcome to ParkEase</h2>
+            <p>For the best experience, including reliable background timers, add this app to your home screen.</p>
+            <div class="modal-buttons">
+                <button id="install-btn" class="button liquid-glass-button primary modal-button">Add to Home Screen</button>
+                <button id="continue-trial-btn" class="button liquid-glass-button secondary modal-button">Continue to Trial</button>
+            </div>
+        </div>
+    </div>
+    <div id="ios-install-popup" class="modal">
+        <div class="modal-content glass-effect">
+            <button class="modal-close-btn" id="closeIosInstallBtn">&times;</button>
+            <h2 class="modal-title">Add to Home Screen</h2>
+            <p style="margin-bottom: 8px;">To install ParkEase on your device:</p>
+            <p style="text-align: left; font-size: 13px; line-height: 1.6;">
+                1. Tap the <strong>Share</strong> button <i class="fa-solid fa-arrow-up-from-bracket"></i> in your browser's toolbar.<br>
+                2. Scroll down the list of options.<br>
+                3. Tap on <strong>'Add to Home Screen'</strong>.
+            </p>
+        </div>
+    </div>
+    <div id="volume-popup" class="modal">
+        <div class="modal-content glass-effect">
+            <h2 class="modal-title">Ready to Park?</h2>
+            <p>Please ensure your device volume is turned up to hear the parking alarm.</p>
+            <div class="modal-buttons">
+                <button id="volume-done-btn" class="button liquid-glass-button primary modal-button">Got It!</button>
+            </div>
+        </div>
+    </div>
+    <div id="timer-warning-modal" class="modal">
+        <div class="modal-content glass-effect">
+            <h2 class="modal-title">Warning!</h2>
+            <p>Navigating away will stop the active parking timer. Are you sure you want to continue?</p>
+            <div class="modal-buttons">
+                 <button id="continue-anyway-btn" class="button liquid-glass-button danger modal-button">Continue Anyway</button>
+                <button id="return-to-timer-btn" class="button liquid-glass-button secondary modal-button">Return to Timer</button>
+            </div>
+        </div>
+    </div>
+    <div id="ticketTimeModal" class="modal">
+        <div class="modal-content glass-effect">
+            <div class="modal-title">Ticket Required: Select Parking Duration</div>
+            <p>Choose how long you plan to park.</p>
+            <div id="ticket-time-options"></div>
+            <button id="cancelTicketTimeBtn" class="button liquid-glass-button danger modal-button" style="margin-top: 20px;">Cancel</button>
+        </div>
+    </div>
+    <div id="editSignModal" class="modal">
+        <div class="modal-content glass-effect">
+            <h2 class="modal-title">Edit Parking Rule</h2>
+            <div class="edit-input-group">
+                <label for="editTimeInput">Parking Time (minutes, 'unlimited', or 'no parking')</label>
+                <input type="text" id="editTimeInput" placeholder="e.g., 120">
+            </div>
+             <div class="modal-buttons">
+                 <button id="saveEditBtn" class="button liquid-glass-button primary modal-button">Save Changes</button>
+                 <button id="cancelEditBtn" class="button liquid-glass-button secondary modal-button">Cancel</button>
+             </div>
+        </div>
+    </div>
+    <div id="historyDetailModal" class="modal">
+        <div class="modal-content glass-effect">
+            <button class="modal-close-btn" id="closeHistoryDetailBtn">×</button>
+            <div class="modal-title">Parking Session Details</div>
+            <div id="history-detail-map"></div>
+            <div id="history-detail-content"></div>
+             <a id="historyOpenInMapsBtn" class="button liquid-glass-button secondary modal-button" target="_blank" rel="noopener noreferrer" style="display: none; margin-top: 15px;"><i class="fa-solid fa-map-location-dot"></i> Open in Google Maps</a>
+        </div>
+    </div>
+
+    <audio id="silentAudio" loop src="https://cdn.glitch.global/16c2e168-5f80-4256-858b-ebbfd77da240/5-seconds-of-silence.mp3?v=1739673346964"></audio>
+    <audio id="alarmAudio" loop src="https://cdn.glitch.global/16c2e168-5f80-4256-858b-ebbfd77da240/5-seconds-of-silence.mp3?v=1739673346964"></audio>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/Draggable.min.js"></script>
+
+    <script>
+      const body = document.body;
+      const allPages = document.querySelectorAll(".page");
+      const video = document.getElementById("video");
+      const canvas = document.getElementById("canvas");
+      const capturedImage = document.getElementById("capturedImage");
+      const captureBtn = document.getElementById("captureBtn");
+      const retakeBtn = document.getElementById("retakeBtn");
+      const status = document.getElementById("status");
+      const warningTimeEl = document.getElementById("warningTime");
+      const expiryTimeEl = document.getElementById("expiryTime");
+      const stopTimerBtn = document.getElementById("stopTimerBtn");
+      const openInMapsBtn = document.getElementById("openInMapsBtn");
+      const silentAudio = document.getElementById("silentAudio");
+      const alarmAudio = document.getElementById("alarmAudio");
+      const ticketTimeModal = document.getElementById("ticketTimeModal");
+      const ticketTimeOptionsContainer = document.getElementById("ticket-time-options");
+      const cancelTicketTimeBtn = document.getElementById("cancelTicketTimeBtn");
+      const warningTimeInput = document.getElementById("warningTimeInput");
+      const aiResponseContainer = document.getElementById("ai-response-container");
+      const aiResponseText = document.getElementById("ai-response-text");
+      const historyList = document.getElementById("history-list");
+      const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+      const historyDetailModal = document.getElementById("historyDetailModal");
+      const closeHistoryDetailBtn = document.getElementById("closeHistoryDetailBtn");
+      const historyDetailMapEl = document.getElementById("history-detail-map");
+      const historyDetailContent = document.getElementById("history-detail-content");
+      const historyOpenInMapsBtn = document.getElementById("historyOpenInMapsBtn");
+      const mapSection = document.getElementById("map-section");
+      const mapEl = document.getElementById("map");
+      const bottomNav = document.querySelector('.bottom-nav');
+      const navInputs = document.querySelectorAll('.nav-input');
+      const zoomSlider = document.getElementById("zoom-slider");
+
+      const darkModeToggle = document.getElementById("darkModeToggle");
+      const disabilityToggle = document.getElementById("disabilityToggle");
+      const showAiResponseToggle = document.getElementById("showAiResponseToggle");
+
+      const leftSignHeader = document.getElementById("leftSignHeader");
+      const leftTime = document.getElementById("leftTime");
+      const leftSign = document.getElementById("leftSign");
+      const leftTicket = document.getElementById("leftTicket");
+      const leftDisabled = document.getElementById("leftDisabled");
+      const leftStartBtn = document.getElementById("leftStartBtn");
+      const leftEditBtn = document.getElementById("leftEditBtn");
+      const rightSignHeader = document.getElementById("rightSignHeader");
+      const rightTime = document.getElementById("rightTime");
+      const rightSign = document.getElementById("rightSign");
+      const rightTicket = document.getElementById("rightTicket");
+      const rightDisabled = document.getElementById("rightDisabled");
+      const rightStartBtn = document.getElementById("rightStartBtn");
+      const rightEditBtn = document.getElementById("rightEditBtn");
+
+      const trialPopup = document.getElementById('trial-popup');
+      const installBtn = document.getElementById('install-btn');
+      const continueTrialBtn = document.getElementById('continue-trial-btn');
+      const iosInstallPopup = document.getElementById('ios-install-popup');
+      const closeIosInstallBtn = document.getElementById('closeIosInstallBtn');
+      const volumePopup = document.getElementById('volume-popup');
+      const volumeDoneBtn = document.getElementById('volume-done-btn');
+      const timerWarningModal = document.getElementById('timer-warning-modal');
+      const continueAnywayBtn = document.getElementById('continue-anyway-btn');
+      const returnToTimerBtn = document.getElementById('return-to-timer-btn');
+      const editSignModal = document.getElementById('editSignModal');
+      const editTimeInput = document.getElementById('editTimeInput');
+      const saveEditBtn = document.getElementById('saveEditBtn');
+      const cancelEditBtn = document.getElementById('cancelEditBtn');
+
+      let deferredPrompt;
+      let videoStream = null;
+      let timersActive = false;
+      let timerIntervals = [];
+      let statusTimeout = null;
+      let currentParkingSession = {};
+      let activeSessionIndex = null;
+      let map = null;
+      let currentUserLocationMarker = null;
+      let savedLocationMarker = null;
+      let currentCoords = null;
+      let watchId = null;
+      let historyDetailMap = null;
+      let alarmHasTriggered = false;
+      let parsedSignData = { left: null, right: null };
+
+      const GEMINI_API_KEY = "AIzaSyC9ldLgyHQpE3H35vtm8Nxpp-9pTYihPdc"; 
+      const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${GEMINI_API_KEY}`;
+      const GEMINI_PROMPT = `Take a deep breath and look at the image provided.
+For each parking sign(s) provided, return the following sections in order:
+
+1. List All Visible Parking Signs
+Include the sign details and the arrow direction (Left, Right, Both(which includes no arrows)).
+Format:
+ [Arrow Direction] Sign (#) - Time: [Minutes/unlimited/no parking] -- Sign it is referring to: [Sign details] -- Ticket: [Yes/No] -- Disabled: [Yes/No]
+
+2. Determine Which Sign Applies Based on Current Time & Day
+Current time: ${new Date().toLocaleString()}
+Current day: ${new Date().toLocaleDateString("en-US", { weekday: "long" })}
+If there are multiple signs that covers different time slots, use the one that applies to the current time.
+If no sign is valid for the current time and there are no other restrictions, return "unlimited".
+If there is a sign with “free parking” and another sign in the same time slot, the free parking applies.
+
+3. Convert Parking Time to Minutes
+"2P" → 120
+"3P" → 180
+"4P" → 240
+"No Parking" / "No Stopping" / "Clearway" / "Zones, like Mail Zone, Police, etc" if it is in that time slot (or no time slot) → "no parking"
+If no parking signs apply, return "unlimited"
+
+4. Handle Ticket/Metered Parking
+If the sign includes "ticket" or "meter" or any thing that indicates paid parking, return "Yes" for the Ticket field.
+
+5. Handle Disability Parking
+If the sign is a disabled parking sign, return "Yes" for the Disabled field and "no parking" for the Time field.
+
+6. Return Final Left & Right Signs
+For each side of the pole, based on the current time and the parking signs you listed out, determine the times the parking sign applies return the FINAL Left Sign and FINAL Right Sign in this format (even if the sign applies to both sides, still return both sides.):
+ FINAL Left Sign - Time: [Minutes/unlimited/no parking] -- Sign Used: [Sign details] -- Reason: [Why you think this parking sign applies] -- Ticket: [Yes/No] -- Disabled: [Yes/No]
+ FINAL Right Sign - Time: [Minutes/unlimited/no parking] -- Sign Used: [Sign details] -- Reason: [Why you think this parking sign applies] -- Ticket: [Yes/No] -- Disabled: [Yes/No]
+
+IMPORTANT Clarifications:
+Only Three Possible Arrow Directions:
+Left Arrow → Only affects the left side of the pole.
+Right Arrow → Only affects the right side of the pole.
+Both Arrows → Applies to both sides, meaning there should be NO separate Left or Right sign interpretations—just one sign applying to both.
+
+Example Scenarios & Expected Output for your better understanding:
+
+Scenario 1
+Signs:
+Left Arrow: "2P Mon-Fri 1pm-6pm"
+Left Arrow: "3P Mon-Fri 6am-1pm"
+Right Arrow: "4P Sat-Sun"
+Current Time: Monday 1:50pm
+Expected Output:
+FINAL Left Sign - Time: 120 -- Sign Used: Mon-Fri 1pm-6pm -- Reason: It is in that time slot -- Ticket: No -- Disabled: No
+FINAL Right Sign - Time: unlimited -- Sign Used: None -- Reason: It is not in any sign’s time slot -- Ticket: No -- Disabled: No
+
+Scenario 2
+Signs:
+Left Arrow: "2P Mon-Fri 1pm-6pm ticket"
+Right Arrow: "3P Mon-Fri 6am-1pm"
+Current Time: Monday 12:30pm
+Expected Output:
+FINAL Left Sign - Time: unlimited -- Sign Used: None -- Reason: It is not in any sign’s time slot -- Ticket: No -- Disabled: No
+FINAL Right Sign - Time: 180 -- Sign Used: Mon-Fri 6am-1pm -- Reason: It is in that time slot -- Ticket: No -- Disabled: No
+
+Scenario 3
+Signs:
+Left Arrow: "No Stopping"
+Right Arrow: "2P Mon-Fri 1pm-6pm"
+Current Time: Tuesday 3pm
+Expected Output:
+FINAL Left Sign - Time: no parking -- Sign Used: No Stopping -- Reason: No parking allowed -- Ticket: No -- Disabled: No
+FINAL Right Sign - Time: 120 -- Sign Used: Mon-Fri 1pm-6pm -- Reason: It is in that time slot -- Ticket: No -- Disabled: No
+
+Scenario 4
+Signs:
+Left Arrow: "3P Sat-Sun"
+Right Arrow: "2P Mon-Fri 1pm-6pm"
+Current Time: Wednesday 10am
+Expected Output:
+FINAL Left Sign - Time: unlimited -- Sign Used: None -- Reason: It is not in any sign’s time slot -- Ticket: No -- Disabled: No
+FINAL Right Sign - Time: unlimited -- Sign Used: None -- Reason: It is not in any sign’s time slot -- Ticket: No -- Disabled: No
+
+Scenario 5
+Signs:
+Left Arrow: "Mail Zone All Other Times"
+Right Arrow: "2P Mon-Fri 1pm-6pm"
+Current Time: Tuesday 3pm
+Expected Output:
+FINAL Left Sign - Time: no parking -- Sign Used: Mail Zone -- Reason: No parking allowed -- Ticket: No -- Disabled: No
+FINAL Right Sign - Time: 120 -- Sign Used: Mon-Fri 1pm-6pm -- Reason: It is in that time slot -- Ticket: No -- Disabled: No
+
+
+Scenario 6: Multiple Signs on Both Sides (Metered Parking)
+Signs:
+Left Arrow:
+"3P Mon-Fri 6am-1pm"
+"2P Mon-Fri 1pm-6pm"
+"4P Sat-Sun"
+ Right Arrow:
+"No Parking Mon-Fri 7am-9am"
+"2P Mon-Fri 9am-6pm ticket"
+"4P Sat-Sun ticket"
+ Current Time: Monday, 10:30am
+Expected Output:
+FINAL Left Sign - Time: 180 -- Sign Used: Mon-Fri 6am-1pm -- Reason: It is in that time slot -- Ticket: No -- Disabled: No
+FINAL Right Sign - Time: 120 -- Sign Used: Mon-Fri 9am-6pm ticket -- Reason: It is in that time slot -- Ticket: Yes -- Disabled: No
+
+Scenario 7: Sign with Both Arrows (Applies to Both Sides)
+Signs:
+Sign with Both Arrows: "3P"
+Current Time: Any
+Expected Output:
+FINAL Left Sign - Time: 180 -- Sign Used: 3P -- Reason: It is in the sign’s time slot -- Ticket: No -- Disabled: No
+FINAL Right Sign - Time: 180 -- Sign Used: 3P -- Reason: It is in the sign’s time slot -- Ticket: No -- Disabled: No
+
+And to remind you again, the current time is:
+Current time: ${new Date().toLocaleString()}
+Current day: ${new Date().toLocaleDateString("en-US", { weekday: "long" })}
+
+
+Thank you so much!`;
+
+      const getLocalStorage = (key, d) => { try { const v = localStorage.getItem(key); return v === null ? d : JSON.parse(v); } catch (e) { return d; } };
+      const setLocalStorage = (key, v) => { try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) { showStatus("Error saving data."); } };
+
+      let settings = {
+        darkMode: getLocalStorage("parkEaseSettings_darkMode", false),
+        disabilityPermit: getLocalStorage("parkEaseSettings_disabilityPermit", false),
+        alarmWarningTime: getLocalStorage("parkEaseSettings_alarmWarningTime", 15),
+        showAIResponse: getLocalStorage("parkEaseSettings_showAIResponse", false),
+      };
+      let parkingHistory = getLocalStorage("parkEaseHistory", []);
+
+      function applyTheme(isDark) {
+        body.classList.toggle("dark-mode", isDark);
+        document.querySelector('meta[name="theme-color"]').setAttribute("content", isDark ? "#0d1117" : "#4a90e2");
+        settings.darkMode = isDark;
+        setLocalStorage("parkEaseSettings_darkMode", isDark);
+      }
+      function applyDisability(hasPermit) {
+        settings.disabilityPermit = hasPermit;
+        setLocalStorage("parkEaseSettings_disabilityPermit", hasPermit);
+        showStatus(`Disability Permit ${hasPermit ? "Enabled" : "Disabled"}. Retake photo if needed.`, 3000);
+      }
+       function formatDuration(ms) {
+        if (!ms || ms < 0) return "N/A";
+        const totalSeconds = Math.floor(ms / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        let str = "";
+        if (hours > 0) str += `${hours}h `;
+        if (minutes > 0 || hours === 0) str += `${minutes}m`;
+        return str.trim() || "less than a minute";
+    }
+      function renderHistory() {
+        historyList.innerHTML = "";
+        if (parkingHistory.length === 0) {
+            historyList.innerHTML = '<li style="text-align: center; color: var(--text-light); background: none; border: none; cursor: default;">No history yet.</li>';
+            clearHistoryBtn.style.display = "none";
+            return;
+        }
+        clearHistoryBtn.style.display = "block";
+        [...parkingHistory].sort((a, b) => b.timestamp - a.timestamp).forEach((item, index) => {
+            const li = document.createElement("li");
+            li.classList.add("history-entry");
+            li.dataset.index = parkingHistory.findIndex(h => h.timestamp === item.timestamp);
+            const date = new Date(item.timestamp);
+            const duration = item.endTime ? formatDuration(item.endTime - item.timestamp) : 'In Progress';
+            li.innerHTML = `<span class="date">${date.toLocaleDateString()} at ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span><span class="details">Rule: ${item.rule} | Duration: ${duration}</span>`;
+            li.addEventListener("click", () => showHistoryDetail(li.dataset.index));
+            historyList.appendChild(li);
+        });
+      }
+      function saveParkingSession(sessionData) {
+        sessionData.timestamp = sessionData.timestamp || Date.now();
+        parkingHistory.push(sessionData);
+        setLocalStorage("parkEaseHistory", parkingHistory);
+        return parkingHistory.length - 1;
+      }
+      function clearHistory() {
+        if (confirm("Clear all parking history?")) {
+          parkingHistory = [];
+          setLocalStorage("parkEaseHistory", []);
+          renderHistory();
+          showStatus("Parking history cleared.");
+        }
+      }
+      function showHistoryDetail(index) {
+        const item = parkingHistory[index];
+        if (!item) return;
+        const startTime = new Date(item.timestamp).toLocaleString();
+        const endTime = item.endTime ? new Date(item.endTime).toLocaleString() : 'N/A';
+        const duration = item.endTime ? formatDuration(item.endTime - item.timestamp) : 'Session not ended';
+
+        historyDetailContent.innerHTML = `
+            <p><strong>Rule:</strong> ${item.rule}</p>
+            <p><strong>Start Time:</strong> ${startTime}</p>
+            <p><strong>End Time:</strong> ${endTime}</p>
+            <p><strong>Duration:</strong> ${duration}</p>
+            ${item.location ? `<p><strong>Location:</strong> Lat: ${item.location.lat.toFixed(5)}, Lng: ${item.location.lng.toFixed(5)}</p>`: ""}`;
+
+        historyDetailModal.classList.add("visible");
+
+        if (item.location) {
+          historyOpenInMapsBtn.href = `https://www.google.com/maps?q=${item.location.lat},${item.location.lng}`;
+          historyOpenInMapsBtn.style.display = 'flex';
+        } else {
+          historyOpenInMapsBtn.style.display = 'none';
+        }
+        
+        if (!historyDetailMap) {
+          historyDetailMap = L.map(historyDetailMapEl);
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(historyDetailMap);
+        }
+        if (item.location) {
+          historyDetailMapEl.style.display = "block";
+          const coords = L.latLng(item.location.lat, item.location.lng);
+          historyDetailMap.setView(coords, 16);
+          historyDetailMap.eachLayer(layer => { if (layer instanceof L.Marker) historyDetailMap.removeLayer(layer); });
+          L.marker(coords).addTo(historyDetailMap).bindPopup("Parked Location").openPopup();
+          setTimeout(() => { try { historyDetailMap.invalidateSize(); } catch (e) {} }, 150);
+        } else {
+          historyDetailMapEl.style.display = "none";
+        }
+      }
+
+      function showPage(pageId) {
+          allPages.forEach(page => page.classList.remove('active'));
+          const activePage = document.getElementById(pageId);
+          if (activePage) activePage.classList.add('active');
+      }
+
+      function setActiveNav(page) {
+        const correspondingInput = document.querySelector(`.nav-input[value="${page}"]`);
+        if (correspondingInput) {
+            correspondingInput.checked = true;
+        }
+      }
+
+      function goHome() {
+          stopCamera();
+          const pageToShow = timersActive ? 'timer-view' : 'camera-view';
+          showPage(pageToShow);
+          if (!timersActive) {
+              initCamera();
+          }
+          setActiveNav('home');
+      }
+      
+      function navigateWithWarning(targetPageId, targetNavValue) {
+          if (timersActive) {
+              timerWarningModal.classList.add('visible');
+              continueAnywayBtn.onclick = () => {
+                  timerWarningModal.classList.remove('visible');
+                  handleStopTimer(false);
+                  showPage(targetPageId);
+                  setActiveNav(targetNavValue);
+                  if (targetPageId === 'history-page') renderHistory();
+              };
+              returnToTimerBtn.onclick = () => {
+                  timerWarningModal.classList.remove('visible');
+              };
+          } else {
+              stopCamera();
+              showPage(targetPageId);
+              setActiveNav(targetNavValue);
+              if (targetPageId === 'history-page') renderHistory();
+          }
+      }
+
+      const isRunningStandalone = () => window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
+      const isIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+      function initializeAppCore() {
+        darkModeToggle.setAttribute('aria-pressed', settings.darkMode);
+        applyTheme(settings.darkMode);
+        disabilityToggle.setAttribute('aria-pressed', settings.disabilityPermit);
+        warningTimeInput.value = settings.alarmWarningTime;
+        showAiResponseToggle.setAttribute('aria-pressed', settings.showAIResponse);
+
+        initLiquidToggles();
+        initCamera();
+        initMap();
+        initModalCloseListeners();
+
+        captureBtn.addEventListener("click", handleCapture);
+        retakeBtn.addEventListener("click", handleRetake);
+        stopTimerBtn.addEventListener("click", () => handleStopTimer(true));
+        zoomSlider.addEventListener('input', (e) => video.style.transform = `scale(${e.target.value})`);
+        video.addEventListener('click', refocusCamera);
+
+        navInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                if (input.checked) {
+                    switch(input.value) {
+                        case 'home': goHome(); break;
+                        case 'history': navigateWithWarning('history-page', 'history'); break;
+                        case 'settings': navigateWithWarning('settings-page', 'settings'); break;
+                    }
+                }
+            });
+        });
+        
+        warningTimeInput.addEventListener("change", (e) => {
+            const val = parseInt(e.target.value);
+            if (!isNaN(val) && val >= 0) {
+                settings.alarmWarningTime = val;
+                setLocalStorage("parkEaseSettings_alarmWarningTime", val);
+                showStatus(`Warning time set to ${val} minutes.`);
+            }
+        });
+        clearHistoryBtn.addEventListener("click", clearHistory);
+        closeHistoryDetailBtn.addEventListener("click", () => historyDetailModal.classList.remove("visible"));
+        
+        cancelTicketTimeBtn.addEventListener("click", () => ticketTimeModal.classList.remove("visible"));
+        cancelEditBtn.addEventListener('click', () => editSignModal.classList.remove('visible'));
+        closeIosInstallBtn.addEventListener('click', () => iosInstallPopup.classList.remove('visible'));
+
+        goHome();
+      }
+
+      function initialStartup() {
+          if (isRunningStandalone()) {
+              volumePopup.classList.add('visible');
+          } else {
+              trialPopup.classList.add('visible');
+          }
+      }
+
+      async function initCamera() {
+        if (videoStream) return;
+        try {
+            const constraints = { 
+                video: { 
+                    facingMode: "environment",
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 }
+                } 
+            };
+            if (navigator.mediaDevices.getSupportedConstraints().focusMode) {
+                constraints.video.focusMode = 'continuous';
+            }
+            videoStream = await navigator.mediaDevices.getUserMedia(constraints);
+            video.srcObject = videoStream;
+            video.style.transform = 'scale(1)';
+            zoomSlider.value = 1;
+        } catch (err) {
+            console.error("Camera Error:", err);
+            showStatus("Error accessing camera: " + err.message, 5000);
+        }
+      }
+      function stopCamera() {
+        if (videoStream) {
+          videoStream.getTracks().forEach((track) => track.stop());
+          videoStream = null;
+        }
+      }
+      function refocusCamera() {
+        if (!videoStream) return;
+        const track = videoStream.getVideoTracks()[0];
+        const capabilities = track.getCapabilities();
+        if (capabilities.focusMode && capabilities.focusMode.includes('continuous')) {
+            track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] })
+                .then(() => showStatus("Refocusing...", 1000))
+                .catch(err => console.error('Refocus failed', err));
+        }
+      }
+
+      function initMap() {
+        map = L.map(mapEl).setView([0, 0], 2);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution: "© OpenStreetMap",
+        }).addTo(map);
+        const currentLocationIcon = L.divIcon({ className: "current-location-marker", iconSize: [16, 16] });
+        if ("geolocation" in navigator) {
+          watchId = navigator.geolocation.watchPosition(
+            (position) => {
+              currentCoords = L.latLng(position.coords.latitude, position.coords.longitude);
+              if (!currentUserLocationMarker) {
+                currentUserLocationMarker = L.marker(currentCoords, { icon: currentLocationIcon }).addTo(map).bindPopup("You are here");
+                if (!map.hasLayer(savedLocationMarker)) map.setView(currentCoords, 16);
+              } else {
+                currentUserLocationMarker.setLatLng(currentCoords);
+              }
+              if (document.getElementById('timer-view').classList.contains('active') && savedLocationMarker) {
+                map.fitBounds(L.latLngBounds(currentCoords, savedLocationMarker.getLatLng()), { padding: [40, 40], maxZoom: 17 });
+              }
+            },
+            (error) => { showStatus("Could not get location.", 3000); },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+          );
+        } else {
+          showStatus("Geolocation is not supported.", 5000);
+        }
+      }
+      function showMapAtParkedLocation() {
+        setTimeout(() => {
+          if (map) {
+            try { map.invalidateSize(); } catch (e) {}
+            if (currentCoords) {
+              if (savedLocationMarker) map.removeLayer(savedLocationMarker);
+              const savedLocationIcon = L.divIcon({ className: "saved-location-marker", iconSize: [20, 20], iconAnchor: [10, 20] });
+              savedLocationMarker = L.marker(currentCoords, { icon: savedLocationIcon }).addTo(map).bindPopup(`<b>Parked Here</b><br>${new Date().toLocaleTimeString()}`).openPopup();
+              currentParkingSession.location = { lat: currentCoords.lat, lng: currentCoords.lng };
+              openInMapsBtn.href = `https://www.google.com/maps?q=${currentCoords.lat},${currentCoords.lng}`;
+              openInMapsBtn.style.display = 'flex';
+              if (currentUserLocationMarker) map.fitBounds(L.latLngBounds(currentCoords, currentUserLocationMarker.getLatLng()), { padding: [40, 40], maxZoom: 17 });
+              else map.setView(currentCoords, 16);
+            }
+          }
+        }, 100);
+      }
+
+      function handleCapture() {
+        if (!videoStream) { showStatus("Camera not ready.", 3000); return; }
+        
+        const scale = zoomSlider.value;
+        canvas.width = video.videoWidth / scale;
+        canvas.height = video.videoHeight / scale;
+        const context = canvas.getContext("2d");
+
+        const sWidth = video.videoWidth / scale;
+        const sHeight = video.videoHeight / scale;
+        const sx = (video.videoWidth - sWidth) / 2;
+        const sy = (video.videoHeight - sHeight) / 2;
+
+        context.drawImage(video, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
+        
+        const imageDataUrl = canvas.toDataURL("image/jpeg", 0.9);
+        capturedImage.src = imageDataUrl;
+
+        stopCamera();
+        showPage('analysis-view');
+        
+        try { silentAudio.play().catch(()=>{}); alarmAudio.play().catch(()=>{}); } catch (e) {}
+        
+        resetAnalysisAndTimer();
+        currentParkingSession = {};
+        analyzeImage(imageDataUrl);
+      }
+
+      function handleRetake() {
+        resetAnalysisAndTimer();
+        stopTimers();
+        if (savedLocationMarker) {
+          map.removeLayer(savedLocationMarker);
+          savedLocationMarker = null;
+        }
+        silenceAlarm();
+        stopCamera();
+        initCamera();
+        showPage('camera-view');
+        showStatus("Ready to capture.");
+      }
+      
+      function resetAnalysisAndTimer() {
+        updateSignCard("left", null);
+        updateSignCard("right", null);
+        parsedSignData = { left: null, right: null };
+        aiResponseContainer.style.display = 'none';
+      }
+      
+      function handleAnalysisFailure() {
+          showStatus("Analysis failed. The sign may be unclear. Please retake.", 5000);
+          setTimeout(handleRetake, 1000);
+      }
+
+      async function analyzeImage(imageDataUrl) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 20000);
+
+          const response = await fetch(GEMINI_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: GEMINI_PROMPT }, { inline_data: { mime_type: "image/jpeg", data: imageDataUrl.split(",")[1] }}] }],
+            }),
+            signal: controller.signal
+          });
+          
+          clearTimeout(timeoutId);
+
+          if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+          const result = await response.json();
+          const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (!text) throw new Error("Unexpected API response structure.");
+          
+          showStatus("Analysis complete. Interpreting rules...", 3000);
+          handleSignResponse(text);
+        } catch (err) {
+          console.error("Analysis error:", err);
+          handleAnalysisFailure();
+        }
+      }
+
+      function parseSignDetails(match) {
+        if (!match) return null;
+        return { time: match[1].trim(), sign: match[2].trim(), requiresTicket: match[3].trim().toLowerCase() === "yes", isDisabled: match[4].trim().toLowerCase() === "yes" };
+      }
+      
+      function handleSignResponse(responseText) {
+          if (settings.showAIResponse) {
+            aiResponseText.textContent = responseText;
+            aiResponseContainer.style.display = 'block';
+          }
+
+          const leftSignRegex = /FINAL\s+Left\s+Sign\s*-\s*Time:\s*(.*?)\s*--\s*Sign Used:\s*(.*?)\s*--\s*Ticket:\s*(Yes|No)\s*--\s*Disabled:\s*(Yes|No)/i;
+          const rightSignRegex = /FINAL\s+Right\s+Sign\s*-\s*Time:\s*(.*?)\s*--\s*Sign Used:\s*(.*?)\s*--\s*Ticket:\s*(Yes|No)\s*--\s*Disabled:\s*(Yes|No)/i;
+          const leftMatch = responseText.match(leftSignRegex);
+          const rightMatch = responseText.match(rightSignRegex);
+          
+          if (!leftMatch || !rightMatch) {
+              console.error("Could not parse FINAL signs from response:", responseText);
+              handleAnalysisFailure();
+              return;
+          }
+
+          parsedSignData.left = parseSignDetails(leftMatch);
+          parsedSignData.right = parseSignDetails(rightMatch);
+          currentParkingSession.signInterpretation = responseText;
+
+          updateSignCard("left", parsedSignData.left);
+          updateSignCard("right", parsedSignData.right);
+
+          showPage('results-view');
+      }
+
+      function processParkingChoice(signData, side, isDisabilityOverride = false) {
+        if (!signData) { showStatus(`Error: Invalid sign data for ${side} side.`, 4000); return; }
+        currentParkingSession.side = side;
+        currentParkingSession.signDetails = signData;
+        currentParkingSession.isDisabilityParking = isDisabilityOverride;
+        let effectiveTime = isDisabilityOverride ? "Unlimited" : signData.time;
+        if (signData.requiresTicket && !isDisabilityOverride) {
+          showTicketTimeSelection(effectiveTime, side);
+        } else {
+          handleTimeSelection(effectiveTime, side, signData.requiresTicket && !isDisabilityOverride);
+        }
+      }
+      
+      function showTicketTimeSelection(maxTimeStr, side) {
+        ticketTimeOptionsContainer.innerHTML = "";
+        let maxMinutes = (maxTimeStr && !isNaN(parseInt(maxTimeStr))) ? parseInt(maxTimeStr) : 120;
+        for (let minutes = 30; minutes <= maxMinutes; minutes += 30) {
+          const btn = document.createElement("button");
+          btn.className = "time-option-btn";
+          btn.textContent = `${Math.floor(minutes / 60)}hr ${minutes % 60}min`.replace('0hr ','').replace(' 0min','');
+          btn.dataset.minutes = minutes;
+          btn.onclick = () => {
+            ticketTimeModal.classList.remove("visible");
+            handleTimeSelection(minutes.toString(), side, true);
+          };
+          ticketTimeOptionsContainer.appendChild(btn);
+        }
+        ticketTimeModal.classList.add("visible");
+      }
+      
+      function handleTimeSelection(timeStr, side, isTicketed = false) {
+        let ruleDescription = "";
+        const timeLower = timeStr.toString().toLowerCase();
+        if (timeLower === "no parking") {
+          ruleDescription = "No Parking";
+        } else if (timeLower === "unlimited") {
+          ruleDescription = `Unlimited Parking${isTicketed ? " (Ticket)" : ""}${currentParkingSession.isDisabilityParking ? " (Disability Permit)" : ""}`;
+        } else {
+          const minutes = parseInt(timeLower);
+          if (!isNaN(minutes) && minutes > 0) {
+            startTimers(minutes);
+            ruleDescription = `${minutes} min Parking${isTicketed ? " (Ticket)" : ""}${currentParkingSession.isDisabilityParking ? " (Disability Permit)" : ""}`;
+          } else {
+            ruleDescription = `Unknown Time (${timeStr})`;
+          }
+        }
+        showStatus(ruleDescription, 4000);
+        currentParkingSession.rule = ruleDescription;
+        activeSessionIndex = saveParkingSession(currentParkingSession);
+      }
+
+      function startTimers(totalMinutes) {
+        stopTimers();
+        const warningMinutes = Math.max(0, totalMinutes - settings.alarmWarningTime);
+        const now = Date.now();
+        const warningEndTime = now + warningMinutes * 60 * 1000;
+        const parkingEndTime = now + totalMinutes * 60 * 1000;
+        const expiryDate = new Date(parkingEndTime);
+        expiryTimeEl.textContent = `Expires: ${expiryDate.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+        
+        function updateTimerDisplay() {
+          const currentTime = Date.now();
+          const parkingTimeLeft = parkingEndTime - currentTime;
+          const warningTimeLeft = warningEndTime - currentTime;
+
+          if (parkingTimeLeft <= 0) {
+            warningTimeEl.textContent = "EXPIRED";
+            if (!alarmHasTriggered) triggerAlarm();
+          } else if (warningTimeLeft <= 0) {
+            warningTimeEl.textContent = formatTime(parkingTimeLeft);
+            if (!alarmHasTriggered) triggerAlarm();
+            warningTimeEl.classList.add("pulse");
+          } else {
+            warningTimeEl.textContent = formatTime(warningTimeLeft);
+          }
+        }
+
+        alarmHasTriggered = false;
+        timerIntervals.push(setInterval(updateTimerDisplay, 1000));
+        updateTimerDisplay();
+        timersActive = true;
+        showMapAtParkedLocation();
+        showPage('timer-view');
+      }
+
+      function handleStopTimer(confirmFirst) {
+        const doStop = () => {
+            if (activeSessionIndex !== null && parkingHistory[activeSessionIndex]) {
+                parkingHistory[activeSessionIndex].endTime = Date.now();
+                setLocalStorage("parkEaseHistory", parkingHistory);
+                activeSessionIndex = null;
+            }
+            stopTimers();
+            goHome();
+        };
+
+        if (confirmFirst) {
+            if (confirm("Are you sure you want to stop the current parking timer?")) {
+                doStop();
+            }
+        } else {
+            doStop();
+        }
+      }
+      
+      function stopTimers() {
+        timerIntervals.forEach(clearInterval);
+        timerIntervals = [];
+        timersActive = false;
+        alarmHasTriggered = false;
+        silenceAlarm();
+        warningTimeEl.classList.remove("pulse");
+        openInMapsBtn.style.display = 'none';
+        showStatus("Timer stopped.", 2000);
+      }
+      
+      function formatTime(ms) {
+        if (ms <= 0) return "00:00:00";
+        const totalSeconds = Math.floor(ms / 1000);
+        const h = Math.floor(totalSeconds / 3600).toString().padStart(2, "0");
+        const m = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, "0");
+        const s = (totalSeconds % 60).toString().padStart(2, "0");
+        return `${h}:${m}:${s}`;
+      }
+      
+      function triggerAlarm() {
+        alarmAudio.src = "https://filesamples.com/samples/audio/mp3/sample2.mp3";
+        alarmAudio.load();
+        alarmAudio.play().catch(e => console.error("Alarm play failed:", e));
+        alarmHasTriggered = true;
+      }
+      
+      function silenceAlarm() {
+        alarmAudio.pause();
+        alarmAudio.src = "https://cdn.glitch.global/16c2e168-5f80-4256-858b-ebbfd77da240/5-seconds-of-silence.mp3?v=1739673346964";
+        alarmAudio.load();
+        alarmAudio.play().catch(()=>{});
+      }
+
+      function showStatus(message, duration = 3000) {
+        if (statusTimeout) clearTimeout(statusTimeout);
+        status.textContent = message;
+        status.classList.add("visible");
+        statusTimeout = setTimeout(() => status.classList.remove("visible"), duration);
+      }
+      
+      function updateSignCard(side, data) {
+        const elements = side === 'left' 
+          ? { header: leftSignHeader, time: leftTime, sign: leftSign, ticket: leftTicket, disabled: leftDisabled, startBtn: leftStartBtn, card: document.getElementById('leftSignCard') }
+          : { header: rightSignHeader, time: rightTime, sign: rightSign, ticket: rightTicket, disabled: rightDisabled, startBtn: rightStartBtn, card: document.getElementById('rightSignCard') };
+
+        if (!data) {
+            elements.header.textContent = `${side.toUpperCase()} SIDE`;
+            elements.time.textContent = "--";
+            elements.sign.textContent = "N/A";
+            elements.ticket.textContent = "N/A";
+            elements.disabled.textContent = "N/A";
+            elements.startBtn.disabled = true;
+            elements.card.className = "sign-card glass-effect";
+            return;
+        }
+
+        const hasDisabilityPermit = settings.disabilityPermit;
+        const isEffectivelyAllowed = (data.time.toLowerCase() !== "no parking" && !data.isDisabled) || (data.isDisabled && hasDisabilityPermit);
+        const isDisabilityOverride = isEffectivelyAllowed && data.isDisabled && data.time.toLowerCase() === "no parking";
+
+        elements.time.textContent = isDisabilityOverride ? "Unlimited" : (data.time === "unlimited" ? "Unlimited" : (isNaN(parseInt(data.time)) ? data.time.toUpperCase() : `${data.time} MIN`));
+        elements.sign.textContent = data.sign || "N/A";
+        elements.ticket.textContent = data.requiresTicket ? "Required" : "Not Required";
+        elements.disabled.textContent = data.isDisabled ? "Permit Only" : "Not Required";
+        
+        elements.startBtn.disabled = !isEffectivelyAllowed;
+        elements.startBtn.onclick = () => processParkingChoice(data, side, isDisabilityOverride);
+
+        let cardClass = "sign-card glass-effect";
+        if (isDisabilityOverride) cardClass += " disabled-allowed";
+        else if (!isEffectivelyAllowed) cardClass += " no-parking";
+        else if (data.requiresTicket) cardClass += " ticket";
+        else cardClass += " allowed";
+        elements.card.className = cardClass;
+      }
+      
+      function setupEditModal(side) {
+        const data = parsedSignData[side];
+        if (!data) return;
+        editTimeInput.value = data.time;
+        editSignModal.classList.add('visible');
+
+        saveEditBtn.onclick = () => {
+          const newTime = editTimeInput.value.trim();
+          if (newTime) {
+            parsedSignData[side].time = newTime;
+            updateSignCard(side, parsedSignData[side]);
+          }
+          editSignModal.classList.remove('visible');
+        };
+      }
+      leftEditBtn.addEventListener('click', () => setupEditModal('left'));
+      rightEditBtn.addEventListener('click', () => setupEditModal('right'));
+
+      const trackPrevious = (el) => {
+            const radios = el.querySelectorAll('input[type="radio"]');
+            let previousValue = null;
+            const initiallyChecked = el.querySelector('input[type="radio"]:checked');
+            if (initiallyChecked) {
+                previousValue = initiallyChecked.getAttribute("c-option");
+                el.setAttribute('c-previous', previousValue);
+            }
+            radios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (radio.checked) {
+                        el.setAttribute('c-previous', previousValue ?? '');
+                        previousValue = radio.getAttribute("c-option");
+                    }
+                });
+            });
+        };
+      trackPrevious(bottomNav);
+
+      function initLiquidToggle(toggle, onToggle) {
+        toggle.innerHTML = `
+            <div class="knockout">
+                <div class="indicator indicator--masked">
+                    <div class="mask"></div>
+                </div>
+            </div>
+            <div class="indicator__liquid">
+                <div class="shadow"></div>
+                <div class="wrapper">
+                    <div class="liquids">
+                        <div class="liquid__shadow"></div>
+                        <div class="liquid__track"></div>
+                    </div>
+                </div>
+                <div class="cover"></div>
+            </div>`;
+
+        const toggleState = async () => {
+            toggle.dataset.active = true;
+            await Promise.allSettled(toggle.getAnimations({ subtree: true }).map((a) => a.finished));
+            const pressed = toggle.matches('[aria-pressed=true]');
+            gsap.timeline({
+                onComplete: () => {
+                    gsap.delayedCall(0.05, () => {
+                        toggle.dataset.active = false;
+                        const newState = !toggle.matches('[aria-pressed=true]');
+                        toggle.setAttribute('aria-pressed', newState);
+                        if (onToggle) onToggle(newState);
+                    });
+                },
+            }).to(toggle, {
+                '--complete': pressed ? 0 : 100,
+                duration: 0.15,
+                delay: 0.2,
+            });
+        };
+
+        const proxy = document.createElement('div');
+        Draggable.create(proxy, {
+            allowContextMenu: true,
+            trigger: toggle,
+            onDragStart: function () {
+                const toggleBounds = toggle.getBoundingClientRect();
+                const pressed = toggle.matches('[aria-pressed=true]');
+                const bounds = pressed ? toggleBounds.left - this.pointerX : toggleBounds.left + toggleBounds.width - this.pointerX;
+                this.dragBounds = bounds;
+                toggle.dataset.active = true;
+            },
+            onDrag: function () {
+                const pressed = toggle.matches('[aria-pressed=true]');
+                const dragged = this.x - this.startX;
+                const complete = gsap.utils.clamp(0, 100, pressed ? gsap.utils.mapRange(this.dragBounds, 0, 0, 100, dragged) : gsap.utils.mapRange(0, this.dragBounds, 0, 100, dragged));
+                this.complete = complete;
+                gsap.set(toggle, { '--complete': complete });
+            },
+            onDragEnd: function () {
+                gsap.fromTo(toggle, { '--complete': this.complete }, {
+                    '--complete': this.complete >= 50 ? 100 : 0,
+                    duration: 0.15,
+                    onComplete: () => {
+                        gsap.delayedCall(0.05, () => {
+                            toggle.dataset.active = false;
+                            const newState = this.complete >= 50;
+                            if (toggle.getAttribute('aria-pressed') != newState.toString()) {
+                                toggle.setAttribute('aria-pressed', newState);
+                                if (onToggle) onToggle(newState);
+                            }
+                        });
+                    },
+                });
+            },
+            onPress: function () {
+                this.__pressTime = Date.now();
+                toggle.dataset.active = true;
+            },
+            onRelease: function () {
+                this.__releaseTime = Date.now();
+                if (((this.startX !== undefined && this.endX !== undefined && Math.abs(this.endX - this.startX) < 4) || this.endX === undefined)) {
+                    toggle.dataset.active = false;
+                }
+                if (this.__releaseTime - this.__pressTime <= 150) {
+                    toggleState();
+                }
+            },
+        });
+
+        toggle.addEventListener('keydown', (e) => { if (e.key === 'Enter') toggleState(); if (e.key === ' ') e.preventDefault(); });
+        toggle.addEventListener('keyup', (e) => { if (e.key === ' ') toggleState(); });
+
+        const isPressed = toggle.getAttribute('aria-pressed') === 'true';
+        gsap.set(toggle, { '--complete': isPressed ? 100 : 0 });
+      }
+
+      function initLiquidToggles() {
+        initLiquidToggle(darkModeToggle, (isPressed) => {
+            applyTheme(isPressed);
+        });
+        initLiquidToggle(disabilityToggle, (isPressed) => {
+            applyDisability(isPressed);
+        });
+        initLiquidToggle(showAiResponseToggle, (isPressed) => {
+            settings.showAIResponse = isPressed;
+            setLocalStorage("parkEaseSettings_showAIResponse", isPressed);
+        });
+      }
+
+      function initModalCloseListeners() {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (modal.id === 'timer-warning-modal') return;
+                if (e.target === modal) {
+                    modal.classList.remove('visible');
+                }
+            });
+        });
+      }
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/service-worker.js").catch(err => console.log("SW registration failed:", err));
+        });
+      }
+
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBtn.disabled = false;
+      });
+
+      installBtn.addEventListener('click', async () => {
+          if (deferredPrompt) {
+              deferredPrompt.prompt();
+              const { outcome } = await deferredPrompt.userChoice;
+              if (outcome === 'accepted') {
+                 showStatus("Install successful! Open from your home screen.", 5000);
+                 trialPopup.classList.remove('visible');
+              }
+              deferredPrompt = null;
+          } else if (isIOS()) {
+              trialPopup.classList.remove('visible');
+              iosInstallPopup.classList.add('visible');
+          } else {
+              showStatus("Installation not available on this browser.", 4000);
+          }
+      });
+      
+      continueTrialBtn.addEventListener('click', () => {
+          trialPopup.classList.remove('visible');
+          volumePopup.classList.add('visible');
+      });
+      
+      volumeDoneBtn.addEventListener('click', () => {
+          volumePopup.classList.remove('visible');
+          initializeAppCore();
+      });
+      
+      document.addEventListener("DOMContentLoaded", initialStartup);
+    </script>
+  </body>
+</html>
