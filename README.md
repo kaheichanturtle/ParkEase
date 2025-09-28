@@ -1,59 +1,65 @@
 # ParkEase
-
 **Never pay a parking fine again.**
-
 
 [https://parkease.neocities.org](https://parkease.neocities.org)
 
-ParkEase is an open-source, browser-based parking timer that uses AI to interpret parking signs and automatically set a timer for you. Just take a photo, and you're set.
+ParkEase is an open-source, browser-based smart parking assistant that uses AI vision to interpret complex parking signs, automatically setting a reliable, background timer and saving your car's location. Simple, smart, and stress-free.
 
 ---
 
-## Features
+## Core Features
 
-- **AI-Powered Sign Reading**: Snap a photo of any parking sign, and our AI handles the rest.
-- **Smart Background Timer**: Timer keeps running even if your phone is locked. Alerts you 15 minutes before time is up.
-- **GPS & Maps**: Automatically saves your parked location so you can find your car later.
-- **Parking History**: View a log of past parked locations.
-- **No App Required**: Works entirely in your browser.
-- **Fully Private**: No accounts, no tracking, no servers. Data is stored only on your device via LocalStorage.
-- **Open Source**: Everything’s public and inspectable.
+- **AI-Powered Sign Analysis**: Instantly decode complex parking rules based on the current time and day, factoring in complex restrictions.
+- **Automatic Background Timer**: Utilizes a privacy-focused MediaTick/silent audio method to ensure the timer runs reliably in the background, even when the phone is locked. Alerts you 15 minutes before time expires.
+- **GPS Location Saving**: Automatically saves your exact parking spot location so you can find your car later with a single tap.
+- **Privacy First**: No user accounts, no sign-ups, and absolutely no data leaves your device. All information is stored securely on your device via LocalStorage.
+- **Browser Native**: No app installation required. Works entirely in modern mobile browsers.
+- **Open Source**: The full source code is available for inspection and auditing.
 
 ---
-## View ParkEase in Action!
+## See ParkEase in Action
 
 <table>
   <tr>
-    <td align="center" width="300">
-      <img src="https://cdn.glitch.global/cbdf53ed-1d1e-441b-8c47-ff223e3a04c8/Screenshot%202025-04-05%20at%201.09.29%E2%80%AFPM.png?v=1743818984022" alt="Camera view on parking sign" width="100%">
-      <h3>1. Take a Photo</h3>
-      <p>Point your camera at the parking sign. ParkEase automatically focuses and prepares to analyze.</p>
+    <td align="center" width="33%">
+      <img src="https://parkease.neocities.org/Screenshot_20250928_170310_Chrome.jpg" alt="App interface showing camera view" width="100%">
+      <h3>1. Snap the Sign</h3>
+      <p>Point your camera at the parking sign. ParkEase captures the image, ready for analysis.</p>
     </td>
-    <td align="center" width="300">
-      <img src="https://cdn.glitch.global/cbdf53ed-1d1e-441b-8c47-ff223e3a04c8/Screenshot%202025-04-05%20at%201.17.57%E2%80%AFPM.png?v=1743819484841" alt="Timer and location view" width="100%">
-      <h3>2. Relax & Go</h3>
-      <p>Our AI sets the timer, saves your location, and sends reminders. Enjoy your day, worry-free!</p>
+    <td align="center" width="33%">
+      <img src="https://parkease.neocities.org/Screenshot_20250928_170417_Chrome.jpg" alt="App interface showing analyzed parking rules" width="100%">
+      <h3>2. Review & Start</h3>
+      <p>The AI instantly shows you the active rules. Tap 'Start Timer' to begin your parking session.</p>
+    </td>
+    <td align="center" width="33%">
+      <img src="https://parkease.neocities.org/Screenshot_20250928_170601_Chrome.jpg" alt="App interface showing a set timer and map" width="100%">
+      <h3>3. Relax & Go</h3>
+      <p>The timer is running in the background and your car's location is saved. We'll remind you when it's time to move!</p>
     </td>
   </tr>
 </table>
 
+---
+
+## Try ParkEase Now
+
+[Launch ParkEase](https://parkease.nekoweb.org)
 
 ---
 
-## Try it now
+## Technology and Thanks
 
-[https://parkease.glitch.me](https://parkease.glitch.me)
+Powered by industry-leading technology and supported by great organizations:
 
----
-
-## Providers and testing thanks to:
-
-- Google DeepMind
-- Glitch (by Fastly)
+- Google Deepmind
+- Anthropic
+- MediaTick (Silent Audio Loop technology)
 - Transport for NSW
 - City of Sydney
 - Knox Grammar School
-- Anthropic
+- Glitch by Fastly
+- Neocities & Nekoweb (Hosting)
+- Adobe Stock
 - Shellcraft Studios
 
 [Request removal from this list](mailto:2uh114cu@duck.com?subject=Remove%20My%20Name%20in%20Github%20from%20ParkEase)
@@ -64,4 +70,6 @@ ParkEase is an open-source, browser-based parking timer that uses AI to interpre
 
 View the full license in the `LICENSE` file.
 
-Copyright 2025 Ka Hei Chan and Shellcraft Studios. Unauthorized copying is prohibited.
+Copyright 2025 KH, Shellcraft Studios. Unauthorized copying is prohibited.
+
+*Disclaimer: Rule interpretations may vary. Users are responsible for verifying and complying with local parking regulations. ParkEase and its creators are not liable for any parking fines or legal issues arising from the use of this app.*
